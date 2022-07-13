@@ -8,7 +8,6 @@ export const WdioLauncher = async (args: {
     const wdio = new Launcher(args._configFilePath, {
       ...(args._args || {}),
     });
-    console.log("TESTTTTT");
     return wdio.run();
   } catch (err) {
     throw err;

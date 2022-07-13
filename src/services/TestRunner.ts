@@ -1,4 +1,6 @@
 import { WdioLauncher } from "./WdioLauncher";
+import { RuntimeConfigs } from "./RuntimeConfigs";
+import { multiCapabilities } from "../services";
 
 export class TestRunner {
   static _instance: TestRunner;
@@ -18,5 +20,13 @@ export class TestRunner {
     }
 
     return new Promise((_resolve, reject) => reject(1));
+  }
+
+  async initConfigs(browser?: string | string[]) {
+    browser
+      ? RuntimeConfigs.getInstance(browser)
+      : RuntimeConfigs.getInstance();
+
+    await multiCapabilities();
   }
 }

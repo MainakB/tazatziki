@@ -72,16 +72,37 @@ export interface ReturnElementType {
   locatorValue: string | null;
   name: string | null;
 }
+
 export type IAppConstants = {
   WAITCONDITIONTIMEOUTACTIONS: number;
   STEPTIMEOUTWAITTIME: number;
   RECOVERYWAITTIME: number;
   LOGTYPE: Options.WebDriverLogTypes;
+  DEFAULTBROWSER: string;
 };
 
 export type PropsType = {
   testSuitePath: string;
   objectToWrite: string;
+};
+
+export interface IRuntimeParameters {
+  browser?: string[] | string;
+  browserVersion?: string;
+}
+
+export interface ICucumberOptsParams {
+  suites: string[];
+  tags: string;
+  // browserVersion?: string;
+  // browserCaps?: any[];
+}
+
+export type IRequestLocalChromeVersion = {
+  host: string;
+  port: number;
+  path: string;
+  requestType: string;
 };
 
 export enum LOGTYPESLIST {

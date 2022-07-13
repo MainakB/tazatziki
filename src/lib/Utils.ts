@@ -1,7 +1,9 @@
 import * as fs from "fs";
-const path = require("path");
+import * as path from "path";
+import * as ChromeLauncher from "chrome-launcher";
+import * as http from "http";
 
-import { PropsType } from "../types";
+import { PropsType, IRequestLocalChromeVersion } from "../types";
 
 export class Utils {
   static _instance: Utils;
@@ -12,6 +14,13 @@ export class Utils {
       Utils._instance = new Utils();
     }
     return Utils._instance;
+  }
+
+  /** *******************************************************************************************
+   *@description : This function returns the POSIX format path
+   ********************************************************************************************* */
+  getPOSIXFormatPath(pathString: string) {
+    return pathString.replace(/\\/g, "/");
   }
 
   /************************************************************************************************
@@ -26,10 +35,16 @@ export class Utils {
   }
 
   /** *******************************************************************************************
-   *@description : This function returns the POSIX format path
+   *@description : This function returns the default download directory as set in chrome options
    ********************************************************************************************* */
-  getPOSIXFormatPath(pathString: string) {
-    return pathString.replace(/\\/g, "/");
+  getDefaultDownloadDirectory() {
+    const basePath = `${process.cwd()}\\Reports`;
+    const posixBasePath = this.getPOSIXFormatPath(basePath);
+    this.ifEnvElse(
+      "JENKINS_CI",
+      () => posixBasePath,
+      () => basePath
+    );
   }
 
   /** **********************************************************************************************
@@ -212,5 +227,45 @@ export class Utils {
       });
     }
     return 0;
+  }
+
+  getRequestLocalChromeVersion(options: IRequestLocalChromeVersion) {
+    return new Promise((resolve, reject) => {
+      const request = http.get(options, (response) => {
+        let data = "";
+        response.on("data", (chunk) => {
+          data += chunk;
+        });
+        response.on("end", () => {
+          if (response.statusCode === 200) {
+            resolve(JSON.parse(data));
+          } else {
+            reject(new Error(data));
+          }
+        });
+      });
+      request.setTimeout(5000, () => {
+        request.abort();
+      });
+
+      request.on("error", reject);
+    });
+  }
+
+  async getInstalledChromeVersion() {
+    const chromeOpts: ChromeLauncher.Options = {
+      chromeFlags: ["--no-sandbox", "--headless"],
+    };
+    const chromeInstance = await ChromeLauncher.launch(chromeOpts);
+    const options = {
+      host: "127.0.0.1",
+      port: chromeInstance.port,
+      path: "/json/version",
+      requestType: "GET",
+    };
+    const response: any = await this.getRequestLocalChromeVersion(options);
+    await chromeInstance.kill();
+
+    return response.Browser.split("/")[1];
   }
 }

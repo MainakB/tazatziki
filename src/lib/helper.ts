@@ -328,3 +328,5 @@ export const setTimedOutStatus = () => {
     StepDurationCalculator.getInstance().setStopStep(false);
   }
 };
+
+// export const setTimedOutStatus = () => {

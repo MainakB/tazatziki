@@ -6,7 +6,7 @@
 // export { Logger, Launcher };
 
 import { Action, Element } from "./core";
-import { Logger, TestRunner } from "./services";
+import { Logger, TestRunner, RuntimeConfigs } from "./services";
 import { Utils } from "./lib";
 
 // import { Assertion } from "./Assertion";
@@ -42,4 +42,4 @@ class Utility {
   }
 }
 const Tzatziki = new Utility();
-export { Tzatziki };
+export { Tzatziki, RuntimeConfigs };

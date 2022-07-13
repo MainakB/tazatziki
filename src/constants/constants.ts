@@ -5,5 +5,6 @@ export const GLOBALFLAGS: IAppConstants = {
   STEPTIMEOUTWAITTIME: 30000,
   RECOVERYWAITTIME: 80000,
   LOGTYPE: LOGTYPESLIST.TRACE,
+  DEFAULTBROWSER: "chrome",
   // Level of logging verbosity: trace | debug | info | warn | error | silent
 };
