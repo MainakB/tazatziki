@@ -6,7 +6,8 @@ const runtimeConfigs = RuntimeConfigs.getInstance();
 
 const setChromeVersion = async () => {
   const browserVersion = await Utils.getInstance().getInstalledChromeVersion();
-  runtimeConfigs.setBrowserVersion(browserVersion);
+  console.log("Found installed chrome version is ", browserVersion);
+  await runtimeConfigs.setBrowserVersion(browserVersion);
 };
 const getCaps = async (option: string) => {
   switch (option) {
@@ -36,16 +37,16 @@ export const multiCapabilities = async () => {
   const browser = runtimeConfigs.getBrowser();
 
   //   process.env.BROWSERNAME!;
-  const browserCapsList = [];
+  let browserCapsList = [];
   const valSent = Array.isArray(browser) ? browser : new Array(browser);
-  for (let i = 0; i < valSent.length; i++) {
-    const cap = await getCaps(valSent[i]);
-    console.log("caop received is", cap);
-    browserCapsList.push(cap);
-  }
-  //   return Promise.all(valSent.map((browserVal) => getCaps(browserVal))).then(
-  //     (caps) => caps
-  //   );
+  // for (let i = 0; i < valSent.length; i++) {
+  //   const cap = await getCaps(valSent[i]);
+  //   console.log("caop received is", cap);
+  //   browserCapsList.push(cap);
+  // }
+  browserCapsList = await Promise.all(
+    valSent.map(async (browserVal) => await getCaps(browserVal))
+  ).then((caps) => caps);
   console.log("set browser cap is", browserCapsList);
   await runtimeConfigs.setBrowserCaps(browserCapsList);
 };
