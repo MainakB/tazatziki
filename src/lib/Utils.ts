@@ -19,7 +19,7 @@ export class Utils {
   /** *******************************************************************************************
    *@description : This function returns the POSIX format path
    ********************************************************************************************* */
-  getPOSIXFormatPath(pathString: string) {
+  getPOSIXFormatPath(pathString: string): string {
     return pathString.replace(/\\/g, "/");
   }
 

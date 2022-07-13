@@ -1,9 +1,7 @@
 import * as _ from "lodash";
-import { Utils } from "../../lib";
+import { Utils } from "../../lib/Utils";
 import { defaultCapabilities } from "./default-capabilities";
 import { RuntimeConfigs } from "../../services";
-
-const { ifEnvElse, getDefaultDownloadDirectory } = Utils.getInstance();
 
 export const chromeDefaultCapabilities = _.merge({}, defaultCapabilities, {
   browserName: "chrome",
@@ -16,7 +14,7 @@ export const chromeDefaultCapabilities = _.merge({}, defaultCapabilities, {
   "goog:chromeOptions": {
     excludeSwitches: ["enable-automation"],
     useAutomationExtension: false,
-    args: ifEnvElse(
+    args: Utils.getInstance().ifEnvElse(
       "JENKINS_CI",
       () => [
         "--disable-web-security",
@@ -59,7 +57,7 @@ export const chromeDefaultCapabilities = _.merge({}, defaultCapabilities, {
       download: {
         prompt_for_download: false,
         directory_upgrade: true,
-        default_directory: getDefaultDownloadDirectory(),
+        default_directory: Utils.getInstance().getDefaultDownloadDirectory(),
       },
     },
   },

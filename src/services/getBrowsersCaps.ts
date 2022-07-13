@@ -1,11 +1,11 @@
 import * as browserCaps from "../types/browsers-capabilities";
 import { RuntimeConfigs } from "../services";
-import { Utils } from "../lib";
-const { getInstalledChromeVersion } = Utils.getInstance();
+import { Utils } from "../lib/Utils";
+
 const runtimeConfigs = RuntimeConfigs.getInstance();
 
 const setChromeVersion = async () => {
-  const browserVersion = await getInstalledChromeVersion();
+  const browserVersion = await Utils.getInstance().getInstalledChromeVersion();
   runtimeConfigs.setBrowserVersion(browserVersion);
 };
 const getCaps = async (option: string) => {

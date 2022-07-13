@@ -4,4 +4,7 @@ node_modules
 Reports
 wdio.d.ts
 .DS_Store
+Gruntfile.js
+src/customers
+src/services-test
 
