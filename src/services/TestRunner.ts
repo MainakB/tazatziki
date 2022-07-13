@@ -23,10 +23,20 @@ export class TestRunner {
   }
 
   async initConfigs(browser?: string | string[]) {
+    console.log("set browser");
     browser
       ? RuntimeConfigs.getInstance(browser)
       : RuntimeConfigs.getInstance();
+    console.log("now set capabilities");
 
     await multiCapabilities();
+    console.log(
+      "now print capabilities first",
+      RuntimeConfigs.getInstance().getBrowserCaps()
+    );
+    console.log(
+      "now print capabilities",
+      await RuntimeConfigs.getInstance().getBrowserCaps()
+    );
   }
 }

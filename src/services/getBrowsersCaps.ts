@@ -38,14 +38,16 @@ export const multiCapabilities = async () => {
   //   process.env.BROWSERNAME!;
   const browserCapsList = [];
   const valSent = Array.isArray(browser) ? browser : new Array(browser);
-  for (const browserVal of valSent) {
-    const cap = await getCaps(browserVal);
+  for (let i = 0; i < valSent.length; i++) {
+    const cap = await getCaps(valSent[i]);
+    console.log("caop received is", cap);
     browserCapsList.push(cap);
   }
   //   return Promise.all(valSent.map((browserVal) => getCaps(browserVal))).then(
   //     (caps) => caps
   //   );
-  runtimeConfigs.setBrowserCaps(browserCapsList);
+  console.log("set browser cap is", browserCapsList);
+  await runtimeConfigs.setBrowserCaps(browserCapsList);
 };
 
 // const setParallelBrowserCount = (cap: any) => {
