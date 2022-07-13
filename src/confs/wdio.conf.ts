@@ -255,7 +255,8 @@ export const config: Options.Testrunner = {
   onPrepare: function (_config: any, _capabilities: any) {
     LocatorsCache.getInstance();
     console.log(
-      "***************",
+      "***************, confs",
+      RuntimeConfigs._instance,
       RuntimeConfigs.getInstance().getBrowserCaps()
     );
   },
