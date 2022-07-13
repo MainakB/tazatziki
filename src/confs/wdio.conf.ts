@@ -89,7 +89,13 @@ export const config: Options.Testrunner = {
   // Sauce Labs platform configurator - a great tool to configure your capabilities:
   // https://saucelabs.com/platform/platform-configurator
   //
-  capabilities: RuntimeConfigs.getInstance().getBrowserCaps(),
+  capabilities: (() => {
+    console.log(
+      "Setting caps in wdio conf file capabilities object",
+      RuntimeConfigs.getInstance().getBrowserCaps()
+    );
+    return RuntimeConfigs.getInstance().getBrowserCaps();
+  })(),
   //  [
   //   {
   //     // maxInstances can get overwritten per capability. So if you have an in-house Selenium
@@ -254,6 +260,7 @@ export const config: Options.Testrunner = {
    */
   onPrepare: function (_config: any, _capabilities: any) {
     LocatorsCache.getInstance();
+
     console.log(
       "***************, confs",
       RuntimeConfigs._instance,
