@@ -28,7 +28,7 @@
     "winston": "^3.8.1"
   },
   "scripts": {
-    "prepare": "npm run build",
+    "prepare": "npm run compile:all",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
     "compile:all": "tsc --diagnostics",
