@@ -1,9 +1,13 @@
 {
   "name": "tziki",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": false,
+  "description": "A test project scaffolding",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
   "dependencies": {
     "@wdio/cli": "^7.20.5",
     "@wdio/cucumber-framework": "^7.20.3",
@@ -24,6 +28,9 @@
     "winston": "^3.8.1"
   },
   "scripts": {
+    "prepare": "npm run build",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags",
     "compile:all": "tsc --diagnostics",
     "clean:build": "rimraf dist",
     "clean:reports": "rimraf Reports",

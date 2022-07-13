@@ -1,6 +1,6 @@
 {
-    "exclude": ["node_modules", "./node_modules", "dist"],
-    "include": ["globals.d.ts", "src/confs/wdio.conf.ts","./**/*", "services/**/*", "src/**/*"],
+    "exclude": ["node_modules", "./node_modules", "dist", "**/__tests__/*"],
+    "include": ["globals.d.ts","index.ts","src/**/*"],
     "compilerOptions": {
         "rootDir": "./",
         "target": "es2019",
