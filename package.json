@@ -1,6 +1,6 @@
 {
   "name": "tzatziki-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "description": "A test project scaffolding",
   "main": "dist/index.js",
@@ -30,7 +30,7 @@
   },
   "scripts": {
     "prepare": "npm run compile:all",
-    "version": "npm run format && git add -A src",
+    "version": "git add -A && && git commit -m 'Setup Package'",
     "postversion": "git push && git push --tags",
     "compile:all": "tsc --diagnostics",
     "clean:build": "rimraf dist",
