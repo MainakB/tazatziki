@@ -1,6 +1,6 @@
 import type { Options } from "@wdio/types";
 // import * as Video from "wdio-video-reporter";
-const { generate } = require("multiple-cucumber-html-reporter");
+// const { generate } = require("multiple-cucumber-html-reporter");
 import { LocatorsCache } from "../services/LocatorsCache";
 import { StepDurationCalculator } from "../services/StepDurationCalculator";
 import { RuntimeConfigs } from "../services/RuntimeConfigs";
@@ -8,8 +8,8 @@ import { RuntimeConfigs } from "../services/RuntimeConfigs";
 import { Logger } from "../services/Logger";
 import { GLOBALFLAGS } from "../constants";
 import { hooks } from "../services/hooks";
-import * as path from "path";
-import * as fs from "fs";
+// import * as path from "path";
+// import * as fs from "fs";
 (global as any).Logger = Logger;
 
 export const config: Options.Testrunner = {
@@ -198,14 +198,14 @@ export const config: Options.Testrunner = {
     //     useCucumberStepReporter: true,
     //   },
     // ],
-    [
-      "cucumberjs-json",
-      {
-        jsonFolder: "Reports/json-output-folder/",
-        language: "en",
-        disableHooks: true,
-      },
-    ],
+    // [
+    //   "cucumberjs-json",
+    //   {
+    //     jsonFolder: "Reports/json-output-folder/",
+    //     language: "en",
+    //     disableHooks: true,
+    //   },
+    // ],
   ],
 
   //
@@ -254,6 +254,10 @@ export const config: Options.Testrunner = {
    */
   onPrepare: function (_config: any, _capabilities: any) {
     LocatorsCache.getInstance();
+    console.log(
+      "***************",
+      RuntimeConfigs.getInstance().getBrowserCaps()
+    );
   },
   /**
    * Gets executed before a worker process is spawned and can be used to initialise specific service
@@ -429,43 +433,43 @@ export const config: Options.Testrunner = {
   // },
   //
 
-  onComplete: function (
-    _exitCode: any,
-    _config: any,
-    _capabilities: any,
-    _results: any
-  ) {
-    // Generate the report when it all tests are done
-    generate({
-      // Required
-      // This part needs to be the same path where you store the JSON files
-      // default = '.tmp/json/'
-      jsonDir: "Reports/json-output-folder/",
-      reportPath: "Reports/report/",
-      saveCollectedJSON: true,
-      displayDuration: true,
-      // for more options see https://github.com/wswebcreation/multiple-cucumber-html-reporter#options
-      customData: {
-        title: "Service info",
-        data: [
-          { label: "Project", value: "Custom project" },
-          { label: "Release", value: "1.2.3" },
-          { label: "Cycle", value: "B11221.34321" },
-          {
-            label: "Execution Start Time",
-            value: "Nov 19th 2017, 02:31 PM EST",
-          },
-          { label: "Execution End Time", value: "Nov 19th 2017, 02:56 PM EST" },
-        ],
-      },
-    });
-    const oldPath = path.resolve(
-      process.cwd(),
-      "Reports/report/merged-output.json"
-    );
-    const newPath = path.resolve(process.cwd(), "Reports/results.json");
-    fs.renameSync(oldPath, newPath);
-  },
+  // onComplete: function (
+  //   _exitCode: any,
+  //   _config: any,
+  //   _capabilities: any,
+  //   _results: any
+  // ) {
+  //   // Generate the report when it all tests are done
+  //   generate({
+  //     // Required
+  //     // This part needs to be the same path where you store the JSON files
+  //     // default = '.tmp/json/'
+  //     jsonDir: "Reports/json-output-folder/",
+  //     reportPath: "Reports/report/",
+  //     saveCollectedJSON: true,
+  //     displayDuration: true,
+  //     // for more options see https://github.com/wswebcreation/multiple-cucumber-html-reporter#options
+  //     customData: {
+  //       title: "Service info",
+  //       data: [
+  //         { label: "Project", value: "Custom project" },
+  //         { label: "Release", value: "1.2.3" },
+  //         { label: "Cycle", value: "B11221.34321" },
+  //         {
+  //           label: "Execution Start Time",
+  //           value: "Nov 19th 2017, 02:31 PM EST",
+  //         },
+  //         { label: "Execution End Time", value: "Nov 19th 2017, 02:56 PM EST" },
+  //       ],
+  //     },
+  //   });
+  //   const oldPath = path.resolve(
+  //     process.cwd(),
+  //     "Reports/report/merged-output.json"
+  //   );
+  //   const newPath = path.resolve(process.cwd(), "Reports/results.json");
+  //   fs.renameSync(oldPath, newPath);
+  // },
   ...hooks,
   // onComplete: function () {
   //   const reportError = new Error("Could not generate Allure report");
