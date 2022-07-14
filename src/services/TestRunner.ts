@@ -30,10 +30,14 @@ export class TestRunner {
     args?: any;
     browser?: string | string[];
   }) {
-    this.initTestLauncher(_initargs.testType, _initargs.args);
     _initargs.browser
       ? RuntimeConfigs.getInstance(_initargs.browser)
       : RuntimeConfigs.getInstance();
     await multiCapabilities();
+    _initargs.args._args = {
+      ...(_initargs.args._args || {}),
+      capabilities: RuntimeConfigs.getInstance().getBrowserCaps(),
+    };
+    this.initTestLauncher(_initargs.testType, _initargs.args);
   }
 }

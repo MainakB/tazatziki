@@ -22,6 +22,8 @@ export class WdioLauncher {
     _args: Partial<RunCommandArguments>;
   }) {
     if (args) {
+      console.log("args is ", args);
+
       try {
         this.wdio = new Launcher(args._configFilePath, {
           ...(args._args || {}),
@@ -29,6 +31,10 @@ export class WdioLauncher {
       } catch (err) {
         throw err;
       }
+    } else {
+      throw Error(
+        "src.services.WdioLauncher: Config file is required as part of setup config parameter from grunt file."
+      );
     }
   }
 
