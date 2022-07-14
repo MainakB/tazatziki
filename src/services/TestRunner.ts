@@ -14,29 +14,41 @@ export class TestRunner {
     return TestRunner._instance;
   }
 
-  public runTest(testType: string, args: any): Promise<number> {
+  initTestLauncher(testType: string, args?: any): void {
     if (testType === "wdio") {
-      return WdioLauncher(args);
+      WdioLauncher.getInstance(args);
     }
-
-    return new Promise((_resolve, reject) => reject(1));
   }
 
-  async initConfigs(browser?: string | string[]) {
-    console.log("set browser");
-    browser
-      ? RuntimeConfigs.getInstance(browser)
-      : RuntimeConfigs.getInstance();
-    console.log("now set capabilities");
+  async runTest() {
+    return WdioLauncher.getInstance().run();
+    // return new Promise((_resolve, reject) => reject(1));
+  }
+
+  async initConfigs(_initargs: {
+    testType: string;
+    args?: any;
+    browser?: string | string[];
+  }) {
+    console.log(
+      "init browser 2",
+      _initargs.browser,
+      typeof _initargs.browser,
+      (Array.isArray(_initargs.browser) && _initargs.browser.length) ||
+        (!Array.isArray(_initargs.browser) && _initargs.browser)
+    );
+    if (
+      (Array.isArray(_initargs.browser) && _initargs.browser.length) ||
+      (!Array.isArray(_initargs.browser) && _initargs.browser)
+    ) {
+      RuntimeConfigs.getInstance().setBrowser(_initargs.browser);
+    }
 
     await multiCapabilities();
-    console.log(
-      "now print capabilities first",
-      RuntimeConfigs.getInstance().getBrowserCaps()
-    );
-    console.log(
-      "now print capabilities",
-      await RuntimeConfigs.getInstance().getBrowserCaps()
-    );
+    _initargs.args._args = {
+      ...(_initargs.args._args || {}),
+      capabilities: RuntimeConfigs.getInstance().getBrowserCaps(),
+    };
+    this.initTestLauncher(_initargs.testType, _initargs.args);
   }
 }
