@@ -22,8 +22,6 @@ export class WdioLauncher {
     _args: Partial<RunCommandArguments>;
   }) {
     if (args) {
-      console.log("args is ", args);
-
       try {
         this.wdio = new Launcher(args._configFilePath, {
           ...(args._args || {}),

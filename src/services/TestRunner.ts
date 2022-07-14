@@ -30,13 +30,6 @@ export class TestRunner {
     args?: any;
     browser?: string | string[];
   }) {
-    console.log(
-      "init browser 2",
-      _initargs.browser,
-      typeof _initargs.browser,
-      (Array.isArray(_initargs.browser) && _initargs.browser.length) ||
-        (!Array.isArray(_initargs.browser) && _initargs.browser)
-    );
     if (
       (Array.isArray(_initargs.browser) && _initargs.browser.length) ||
       (!Array.isArray(_initargs.browser) && _initargs.browser)
