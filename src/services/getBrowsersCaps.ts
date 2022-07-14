@@ -1,7 +1,6 @@
 import * as browserCaps from "../types/browsers-capabilities";
 import { RuntimeConfigs } from "../services";
 
-
 const runtimeConfigs = RuntimeConfigs.getInstance();
 
 // const setChromeVersion = async () => {
@@ -25,8 +24,8 @@ const getCaps = async (option: string) => {
     //   return setParallelBrowserCount(browserCaps.chromeDefaultCapabilities);
     // case "edge":
     //   return setParallelBrowserCount(browserCaps.microsoftEdgeCapabilities);
-    // case "internet explorer":
-    //   return setParallelBrowserCount(browserCaps.internetExplorerCapabilities);
+    case "safariDefaultCapabilities":
+      return browserCaps.safariDefaultCapabilities;
     default:
       Logger.info("Terminating test.Incorrect browser stack");
       break;
