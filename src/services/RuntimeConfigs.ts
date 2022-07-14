@@ -2,7 +2,7 @@ import { IRuntimeParameters } from "../types";
 import { GLOBALFLAGS } from "../constants";
 
 export class RuntimeConfigs {
-  static _instance: RuntimeConfigs;
+  private static _instance: RuntimeConfigs;
 
   private suites: string[] | string = [];
   private customer: string = "";

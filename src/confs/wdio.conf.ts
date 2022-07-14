@@ -259,7 +259,7 @@ export const config: Options.Testrunner = {
     console.log(
       "***************, confs",
       this,
-      RuntimeConfigs._instance,
+      // RuntimeConfigs._instance,
       RuntimeConfigs.getInstance().getBrowserCaps()
     );
   },
