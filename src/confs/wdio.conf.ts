@@ -199,14 +199,14 @@ export const config: Options.Testrunner = {
     //     useCucumberStepReporter: true,
     //   },
     // ],
-    // [
-    //   "cucumberjs-json",
-    //   {
-    //     jsonFolder: "Reports/json-output-folder/",
-    //     language: "en",
-    //     disableHooks: true,
-    //   },
-    // ],
+    [
+      "cucumberjs-json",
+      {
+        jsonFolder: "Reports/json-output-folder/",
+        language: "en",
+        disableHooks: true,
+      },
+    ],
   ],
 
   //
