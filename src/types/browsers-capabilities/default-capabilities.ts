@@ -4,5 +4,4 @@
      * In addition, you may specify count, shardTestFiles, and maxInstances
      * available from protractor config file
      * */
-    count: 1,
 };

@@ -6,7 +6,7 @@ import { RuntimeConfigs } from "../../services";
 export const chromeDefaultCapabilities = _.merge({}, defaultCapabilities, {
   browserName: "chrome",
   browserVersion: RuntimeConfigs.getInstance().getBrowserVersion(),
-  unexpectedAlertBehaviour: "accept",
+  // unexpectedAlertBehaviour: "accept",
   // List of log levels : “OFF”, “SEVERE”, “WARNING”, “INFO”, “CONFIG”, “FINE”, “FINER”, “FINEST”, “ALL”. (Lower -> Higher)
   //   "goog:loggingPrefs": {
   //     browser: "WARNING",
