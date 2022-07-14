@@ -1,5 +1,5 @@
 import * as browserCaps from "../types/browsers-capabilities";
-import { RuntimeConfigs } from "../services";
+import { RuntimeConfigs, Logger } from "../services";
 
 const runtimeConfigs = RuntimeConfigs.getInstance();
 
@@ -11,7 +11,7 @@ const runtimeConfigs = RuntimeConfigs.getInstance();
 // };
 
 const getCaps = async (option: string) => {
-  switch (option) {
+  switch (option.toLowerCase()) {
     // case "chrome-beta":
     //   return setParallelBrowserCount(browserCaps.chromeBetaCapabilities);
     // case "chrome-canary":
@@ -22,15 +22,21 @@ const getCaps = async (option: string) => {
     case "chrome":
       return browserCaps.chromeDefaultCapabilities;
     //   return setParallelBrowserCount(browserCaps.chromeDefaultCapabilities);
-    // case "edge":
-    //   return setParallelBrowserCount(browserCaps.microsoftEdgeCapabilities);
+    case "edge":
+    case "msedge":
+    case "microsoftedge":
+      return browserCaps.msEdgeDefaultCapabilities;
+    case "firefox":
+      return browserCaps.firefoxDefaultCapabilities;
     case "safari":
       return browserCaps.safariDefaultCapabilities;
     default:
-      Logger.info("Terminating test.Incorrect browser stack");
+      Logger.log("Terminating test.Incorrect browser stack");
       break;
   }
-  return new Error("Terminating test.Incorrect browser stack");
+  return new Error(
+    "Terminating test.Incorrect browser stack. Allowed values are (chrome, edge, msedge, safari, firefox"
+  );
 };
 
 export const multiCapabilities = async () => {

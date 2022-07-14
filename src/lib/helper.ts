@@ -10,6 +10,7 @@ import {
   LocatorsCache,
   CucumberLoggerService,
   StepDurationCalculator,
+  Logger,
 } from "../services";
 import { Utils } from "./Utils";
 
@@ -328,5 +329,3 @@ export const setTimedOutStatus = () => {
     StepDurationCalculator.getInstance().setStopStep(false);
   }
 };
-
-
