@@ -157,16 +157,6 @@ export class ExplicitWaits {
   }
 
   public async returnWait(params: IEvaluateWait): Promise<any[]> {
-    // if (StepDurationCalculator.getInstance().getStopStep()) {
-    //   console.log(
-    //     "error message StepDurationCalculator.getInstance().getStopStep()",
-    //     StepDurationCalculator.getInstance().getStopStep()
-    //   );
-    //   throw Error(
-    //     `${filePath}.returnWait: Stopping step as all the retries failed on script timeout.`
-    //   );
-    // }
-
     const { element, oElementText } = params;
     const waitConditionTime =
       params.waitConditionTime || GLOBALFLAGS.WAITCONDITIONTIMEOUTACTIONS;
@@ -358,8 +348,6 @@ export class ExplicitWaits {
           `Expected element not present in the page.`,
         ];
     }
-    // returnValue.push(StepDurationCalculator.getInstance().getStopStep());
-    console.log(`\n\nReturning wait`, returnValue);
     return returnValue;
   }
 }

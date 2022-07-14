@@ -255,13 +255,6 @@ export const config: Options.Testrunner = {
    */
   onPrepare: function (_config: any, _capabilities: any) {
     LocatorsCache.getInstance();
-    // this.capabilities = RuntimeConfigs.getInstance().getBrowserCaps();
-    console.log(
-      "***************, confs",
-      this,
-      // RuntimeConfigs._instance,
-      RuntimeConfigs.getInstance().getBrowserCaps()
-    );
   },
   /**
    * Gets executed before a worker process is spawned and can be used to initialise specific service
