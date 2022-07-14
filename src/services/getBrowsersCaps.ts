@@ -1,14 +1,16 @@
 import * as browserCaps from "../types/browsers-capabilities";
 import { RuntimeConfigs } from "../services";
-import { Utils } from "../lib/Utils";
+
 
 const runtimeConfigs = RuntimeConfigs.getInstance();
 
-const setChromeVersion = async () => {
-  const browserVersion = await Utils.getInstance().getInstalledChromeVersion();
-  console.log("Found installed chrome version is ", browserVersion);
-  await runtimeConfigs.setBrowserVersion(browserVersion);
-};
+// const setChromeVersion = async () => {
+//   const browserVersion = await Utils.getInstance().getInstalledChromeVersion();
+//   console.log("Found installed chrome version is ", browserVersion);
+//   runtimeConfigs.setBrowserVersion(browserVersion);
+//   return browserVersion;
+// };
+
 const getCaps = async (option: string) => {
   switch (option) {
     // case "chrome-beta":
@@ -19,7 +21,6 @@ const getCaps = async (option: string) => {
     //   return setParallelBrowserCount(browserCaps.chromeDevCapabilities);
     case "chrome-latest":
     case "chrome":
-      await setChromeVersion();
       return browserCaps.chromeDefaultCapabilities;
     //   return setParallelBrowserCount(browserCaps.chromeDefaultCapabilities);
     // case "edge":
@@ -48,7 +49,7 @@ export const multiCapabilities = async () => {
     valSent.map(async (browserVal) => await getCaps(browserVal))
   ).then((caps) => caps);
   console.log("set browser cap is", browserCapsList);
-  await runtimeConfigs.setBrowserCaps(browserCapsList);
+  runtimeConfigs.setBrowserCaps(browserCapsList);
 };
 
 // const setParallelBrowserCount = (cap: any) => {

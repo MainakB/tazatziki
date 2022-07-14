@@ -1,11 +1,10 @@
 import * as _ from "lodash";
 import { Utils } from "../../lib/Utils";
 import { defaultCapabilities } from "./default-capabilities";
-import { RuntimeConfigs } from "../../services";
 
 export const chromeDefaultCapabilities = _.merge({}, defaultCapabilities, {
   browserName: "chrome",
-  browserVersion: RuntimeConfigs.getInstance().getBrowserVersion(),
+  // browserVersion: '',
   // unexpectedAlertBehaviour: "accept",
   // List of log levels : “OFF”, “SEVERE”, “WARNING”, “INFO”, “CONFIG”, “FINE”, “FINER”, “FINEST”, “ALL”. (Lower -> Higher)
   //   "goog:loggingPrefs": {
