@@ -1,6 +1,7 @@
 import { WdioLauncher } from "./WdioLauncher";
 import { RuntimeConfigs } from "./RuntimeConfigs";
 import { multiCapabilities } from "../services";
+import { Utils } from "../lib";
 
 export class TestRunner {
   private static _instance: TestRunner;
@@ -20,14 +21,17 @@ export class TestRunner {
     }
   }
 
-  async runTest(testSuite: string[]) {
-    RuntimeConfigs.getInstance().setSuites(testSuite);
+  async runTest() {
+    console.log("start test run");
+
     return WdioLauncher.getInstance().run();
     // return new Promise((_resolve, reject) => reject(1));
   }
 
   async initConfigs(_initargs: {
     testType: string;
+    suites: string;
+    customer: string;
     args?: { _args: object; __configFilePath?: string };
     browser?: string | string[];
   }) {
@@ -37,10 +41,12 @@ export class TestRunner {
     ) {
       RuntimeConfigs.getInstance().setBrowser(_initargs.browser);
     }
-    console.log(1111);
-
+    const testSpecs = await Utils.getInstance().resolveTestSuite(
+      _initargs.suites,
+      _initargs.customer
+    );
     await multiCapabilities();
-    console.log(222);
+
     if (!_initargs.args) {
       _initargs.args = {
         _args: {},
@@ -49,6 +55,8 @@ export class TestRunner {
     _initargs.args._args = {
       ..._initargs.args._args,
       capabilities: RuntimeConfigs.getInstance().getBrowserCaps(),
+      suites: testSpecs.testSuite,
+      suite: testSpecs.suiteNames,
     };
 
     this.initTestLauncher(_initargs.testType, _initargs.args);

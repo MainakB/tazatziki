@@ -1,15 +1,14 @@
 import type { Options } from "@wdio/types";
-// import * as Video from "wdio-video-reporter";
 const { generate } = require("multiple-cucumber-html-reporter");
 import { LocatorsCache } from "../services/LocatorsCache";
 import { StepDurationCalculator } from "../services/StepDurationCalculator";
-import { RuntimeConfigs } from "../services/RuntimeConfigs";
 // import * as allure from "allure-commandline";
 import { Logger } from "../services/Logger";
 import { GLOBALFLAGS } from "../constants";
 import { hooks } from "../services/hooks";
 import * as path from "path";
 import * as fs from "fs";
+const Video = require("wdio-video-reporter");
 (global as any).Logger = Logger;
 
 export const config: Options.Testrunner = {
@@ -61,7 +60,13 @@ export const config: Options.Testrunner = {
   // then the current working directory is where your `package.json` resides, so `wdio`
   // will be called from there.
   //
-  specs: [],
+  // specs: [],
+  // suites: {
+  //   regression: [
+  //     "src/customers/generic/features/login.feature",
+  //     "src/customers/generic/features/login.feature",
+  //   ],
+  // },
   // ["./features/**/*.feature"],
   // Patterns to exclude.
   exclude: [
@@ -183,13 +188,13 @@ export const config: Options.Testrunner = {
   reporters: [
     "spec",
     // "junit",
-    // [
-    //   Video,
-    //   {
-    //     saveAllVideos: false, // If true, also saves videos for successful test cases
-    //     videoSlowdownMultiplier: 3, // Higher to get slower videos, lower for faster videos [Value 1-100]
-    //   },
-    // ],
+    [
+      Video,
+      {
+        saveAllVideos: false, // If true, also saves videos for successful test cases
+        videoSlowdownMultiplier: 3, // Higher to get slower videos, lower for faster videos [Value 1-100]
+      },
+    ],
     // [
     //   "allure",
     //   {
@@ -255,6 +260,7 @@ export const config: Options.Testrunner = {
    */
   onPrepare: function (_config: any, _capabilities: any) {
     LocatorsCache.getInstance();
+    console.log("\n\nOn prep", this);
   },
   /**
    * Gets executed before a worker process is spawned and can be used to initialise specific service
@@ -265,14 +271,7 @@ export const config: Options.Testrunner = {
    * @param  {[type]} args     object that will be merged with the main configuration once worker is initialized
    * @param  {[type]} execArgv list of string arguments passed to the worker process
    */
-  //  @ts-ignore
-  onWorkerStart: function (_cid, _caps, specs, _args, _execArgv) {
-    console.log(
-      "\n\nget specs*************",
-      Object.values(RuntimeConfigs.getInstance().getSuites()),
-      this
-    );
-    this.specs = Object.values(RuntimeConfigs.getInstance().getSuites());
+  onWorkerStart: function (_cid, _caps, _specs, _args, _execArgv) {
     console.log("\n\nafter specs setup*************", this);
   },
   /**

@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as ChromeLauncher from "chrome-launcher";
 import * as http from "http";
+import { Logger } from "../services/Logger";
 
 import {
   IWriteToDirectory,
@@ -180,7 +181,8 @@ export class Utils {
 
   // 1. List out the path of test suite in an array and fetch the test suites for the listed modules
   async listTestSuitePaths(testModuleValue: string) {
-    const filePath = `dist/src/customers/replaceWithCustomerName/test-suite/test-suites-collection.js`;
+    // const filePath = `dist/src/customers/replaceWithCustomerName/test-suite/test-suites-collection.js`;
+    const filePath = `src/customers/replaceWithCustomerName/test-suite/test-suites-collection.json`;
     let fileName = "";
     let fileExist = await this.checkIfFileExists({
       filePath: filePath.replace("replaceWithCustomerName", testModuleValue),
@@ -198,7 +200,7 @@ export class Utils {
 
       if (!fileExist) {
         throw new Error(
-          "Test suite file does not exist" +
+          "Test suite file does not exist " +
             filePath.replace(
               "replaceWithCustomerName",
               testModuleValue.toLowerCase()
@@ -213,7 +215,7 @@ export class Utils {
     } else {
       fileName = filePath.replace("replaceWithCustomerName", testModuleValue);
     }
-    return import(`${process.cwd()}/${fileName}`);
+    return require(`${process.cwd()}/${fileName}`);
   }
 
   async createDirectory(path: string) {
@@ -245,33 +247,39 @@ export class Utils {
   }
 
   // 2. Resolve the test suites collection from multiple modules,to form a master test suite
-  async resolveMultipleModuleSuites(testModuleListFromExec: string) {
+  async resolveMultipleModuleSuites(
+    testModuleListFromExec: string
+  ): Promise<object> {
     const allSuites = await this.listTestSuitePaths(testModuleListFromExec);
-    console.log("1111111111@@@@@");
-    let objectToWrite = `module.exports= ${JSON.stringify(
-      allSuites[Object.keys(allSuites)[0]]
-    ).replace(/"([^(")"]+)":/g, "$1:")}`;
-    objectToWrite = objectToWrite.replace(
+    console.log("all siuite now", allSuites);
+    let suiteObject = JSON.stringify(allSuites).replace(
       /features\//g,
       `src/customers/${testModuleListFromExec.toLocaleLowerCase()}/features/`
     );
-    console.log("change", objectToWrite);
+    return JSON.parse(suiteObject);
+  }
 
-    const directoryPath = `dist/src/test-suites/${testModuleListFromExec.toLocaleLowerCase()}/`;
-    const fileName = `test-suites-collection.js`;
-
-    const fileWritten = await this.writeFile({
-      directoryPath,
-      fileName,
-      data: objectToWrite,
-    });
-
-    if (fileWritten) {
-      console.log("Updated test suite collection successfully!");
-      return 0;
-    } else {
-      return 1;
+  async resolveTestSuiteCollection(suiteNames: string, suiteObject: object) {
+    let testSuite = {};
+    let missingTestSuite = [];
+    console.log("term", suiteNames, suiteObject);
+    for (let suiteName of suiteNames) {
+      if ((suiteObject as any)[suiteName]) {
+        testSuite = {
+          ...testSuite,
+          [suiteName]: (suiteObject as any)[suiteName],
+        };
+      } else {
+        missingTestSuite.push(suiteName);
+      }
     }
+    if (missingTestSuite.length) {
+      Logger.log(
+        `src.lib/Utils.resolveTestSuiteCollection : Following test suites are missing in the test suite collection - ${missingTestSuite}. Please make sure the test suite is present in the test suite collections file.`
+      );
+    }
+
+    return { testSuite, suiteNames };
   }
 
   getRequestLocalChromeVersion(options: IRequestLocalChromeVersion) {
@@ -312,5 +320,53 @@ export class Utils {
     await chromeInstance.kill();
 
     return response.Browser.split("/")[1];
+  }
+
+  getTestModuleName(testModule: string) {
+    let testModuleList;
+    if (testModule !== undefined && testModule !== "undefined") {
+      (testModule.charAt(0) === "[" &&
+        testModule.charAt(testModule.length - 1) === "]") ||
+      (testModule.charAt(0) === "{" &&
+        testModule.charAt(testModule.length - 1) === "}") ||
+      (testModule.charAt(0) === "(" &&
+        testModule.charAt(testModule.length - 1) === ")")
+        ? (testModuleList = testModule.slice(1, -1).split(","))
+        : (testModuleList = testModule.split(","));
+    } else {
+      throw new Error(
+        "Please pass one or multiple test module name(s) to run the test against. Pass the flag as --testModuleName"
+      );
+    }
+    return testModuleList;
+  }
+
+  async resolveTestSuite(suites: string, customer: string) {
+    if (!suites) {
+      throw new Error(
+        "Please pass one or multiple test suite name(s), to run the test against. Pass the flag as --suites=abc for a single suite abc or --suites=[abc,xyz] for more than one."
+      );
+    }
+    let testSuiteParamVal = suites;
+    let testSuiteParam = "";
+    if (
+      testSuiteParamVal.charAt(0) === "[" &&
+      testSuiteParamVal.charAt(testSuiteParamVal.length - 1) === "]"
+    ) {
+      testSuiteParam = JSON.parse(
+        testSuiteParamVal
+          .split("]")
+          .join('"]')
+          .split("[")
+          .join('["')
+          .split(",")
+          .join('","')
+          .replace(/\]\",\"/g, "],")
+      );
+    }
+    console.log("testSuiteParam next", testSuiteParam);
+
+    const suiteObject = await this.resolveMultipleModuleSuites(customer);
+    return this.resolveTestSuiteCollection(testSuiteParam, suiteObject);
   }
 }

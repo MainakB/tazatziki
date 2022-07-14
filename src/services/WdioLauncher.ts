@@ -23,7 +23,6 @@ export class WdioLauncher {
   }) {
     if (args) {
       try {
-        console.log(`Config file path is : ${this.configFilePath}`);
         this.wdio = new Launcher(this.configFilePath, {
           ...(args._args || {}),
         });
