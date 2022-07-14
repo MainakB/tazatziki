@@ -3,7 +3,7 @@ import { RuntimeConfigs } from "./RuntimeConfigs";
 import { multiCapabilities } from "../services";
 
 export class TestRunner {
-  static _instance: TestRunner;
+  private static _instance: TestRunner;
 
   private constructor() {}
 
@@ -20,14 +20,15 @@ export class TestRunner {
     }
   }
 
-  async runTest() {
+  async runTest(testSuite: string[]) {
+    RuntimeConfigs.getInstance().setSuites(testSuite);
     return WdioLauncher.getInstance().run();
     // return new Promise((_resolve, reject) => reject(1));
   }
 
   async initConfigs(_initargs: {
     testType: string;
-    args?: any;
+    args?: { _args: object; __configFilePath?: string };
     browser?: string | string[];
   }) {
     if (
@@ -36,12 +37,20 @@ export class TestRunner {
     ) {
       RuntimeConfigs.getInstance().setBrowser(_initargs.browser);
     }
+    console.log(1111);
 
     await multiCapabilities();
+    console.log(222);
+    if (!_initargs.args) {
+      _initargs.args = {
+        _args: {},
+      };
+    }
     _initargs.args._args = {
-      ...(_initargs.args._args || {}),
+      ..._initargs.args._args,
       capabilities: RuntimeConfigs.getInstance().getBrowserCaps(),
     };
+
     this.initTestLauncher(_initargs.testType, _initargs.args);
   }
 }

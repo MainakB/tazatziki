@@ -1,5 +1,5 @@
 import Launcher, { RunCommandArguments } from "@wdio/cli";
-
+import * as path from "path";
 // export const WdioLauncher = async (args: {
 //   _configFilePath: string;
 //   _args: Partial<RunCommandArguments>;
@@ -14,8 +14,8 @@ import Launcher, { RunCommandArguments } from "@wdio/cli";
 //   }
 // };
 export class WdioLauncher {
-  static _instance: WdioLauncher;
-
+  private static _instance: WdioLauncher;
+  private configFilePath = path.join(__dirname + "/../confs/wdio.conf.js");
   private wdio: Launcher | null = null;
   constructor(args?: {
     _configFilePath: string;
@@ -23,7 +23,8 @@ export class WdioLauncher {
   }) {
     if (args) {
       try {
-        this.wdio = new Launcher(args._configFilePath, {
+        console.log(`Config file path is : ${this.configFilePath}`);
+        this.wdio = new Launcher(this.configFilePath, {
           ...(args._args || {}),
         });
       } catch (err) {

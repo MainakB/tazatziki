@@ -1,7 +1,7 @@
 import { GLOBALFLAGS } from "../constants";
 
 export class StepDurationCalculator {
-  static _instance: StepDurationCalculator;
+  private static _instance: StepDurationCalculator;
   private dateTime: Date = new Date();
   private actionDateTime: Date = new Date();
   private actionWaitConditionTime: number =

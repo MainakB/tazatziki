@@ -253,8 +253,16 @@ export const config: Options.Testrunner = {
    * @param {Object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  onPrepare: function (_config: any, _capabilities: any) {
+  onPrepare: function (config: any, _capabilities: any) {
     LocatorsCache.getInstance();
+    console.log(
+      "\n\nget specs*************",
+      Object.values(RuntimeConfigs.getInstance().getSuites()),
+      this
+    );
+    config.specs = Object.values(RuntimeConfigs.getInstance().getSuites());
+
+    console.log("\n\nafter specs setup*************", this);
   },
   /**
    * Gets executed before a worker process is spawned and can be used to initialise specific service
@@ -265,7 +273,8 @@ export const config: Options.Testrunner = {
    * @param  {[type]} args     object that will be merged with the main configuration once worker is initialized
    * @param  {[type]} execArgv list of string arguments passed to the worker process
    */
-  // onWorkerStart: function (cid, caps, specs, args, execArgv) {
+  // onWorkerStart: function (_cid, _caps, _specs, _args, _execArgv) {
+
   // },
   /**
    * Gets executed just after a worker process has exited.
@@ -284,7 +293,13 @@ export const config: Options.Testrunner = {
    * @param {Array.<String>} specs List of spec file paths that are to be run
    * @param {String} cid worker id (e.g. 0-0)
    */
-  // beforeSession: function (config, capabilities, specs, cid) {
+  // beforeSession: function (_config, _capabilities, _specs, _cid) {
+  //   // console.log(
+  //   //   "get specs",
+  //   //   Object.values(RuntimeConfigs.getInstance().getSuites())
+  //   // );
+
+  //   // this.suites = RuntimeConfigs.getInstance().getSuites();
   // },
   /**
    * Gets executed before test execution begins. At this point you can access to all global

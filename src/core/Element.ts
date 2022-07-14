@@ -27,7 +27,7 @@ import { GLOBALFLAGS } from "../constants";
 import { ExplicitWaits } from "./ExplicitWaits";
 
 export class Element extends ExceptionHandler {
-  static _instance: Element;
+  private static _instance: Element;
   private fileName: string;
   private utils: Utils;
   // Assertion: Assertion;

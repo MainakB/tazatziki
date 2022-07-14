@@ -3,10 +3,14 @@ import * as path from "path";
 import * as ChromeLauncher from "chrome-launcher";
 import * as http from "http";
 
-import { PropsType, IRequestLocalChromeVersion } from "../types";
+import {
+  IWriteToDirectory,
+  ICheckFileExists,
+  IRequestLocalChromeVersion,
+} from "../types";
 
 export class Utils {
-  static _instance: Utils;
+  private static _instance: Utils;
   private constructor() {}
 
   static getInstance() {
@@ -62,12 +66,37 @@ export class Utils {
     );
   }
 
-  async checkIfFileExists(params: { filePath: string; pathInCwd?: boolean }) {
-    const fullPath = params.pathInCwd
-      ? this.resolveCrossPlatformPaths(params.filePath)
-      : this.resolveCrossPlatformPaths(params.filePath, false);
+  async checkIfFileExists(params: ICheckFileExists) {
+    try {
+      const fullPath = params.pathInCwd
+        ? this.resolveCrossPlatformPaths(params.filePath)
+        : this.resolveCrossPlatformPaths(params.filePath, false);
 
-    return fs.existsSync(fullPath) && fs.lstatSync(fullPath).isFile();
+      let isFilePresent = false;
+
+      const check = async (fullPath: string) => {
+        return fs.existsSync(fullPath) && fs.lstatSync(fullPath).isFile();
+      };
+
+      if (params.timerInMs) {
+        const startTime = Date.now();
+        while (Date.now() - startTime < params.timerInMs) {
+          isFilePresent = await check(fullPath);
+        }
+      } else {
+        isFilePresent = await check(fullPath);
+      }
+      if (!isFilePresent)
+        Logger.log(
+          `src.lib.Utils.checkIfFileExists : Status of presence of file is ${isFilePresent} in path ${fullPath}`
+        );
+      return isFilePresent;
+    } catch (err: any) {
+      Logger.log(
+        `src.lib.Utils.checkIfFileExists : Error checking if file exists - ${err.message}`
+      );
+      throw err;
+    }
   }
 
   moveFile(params: { src: string; dest: string }) {
@@ -168,7 +197,13 @@ export class Utils {
       });
 
       if (!fileExist) {
-        throw new Error("Incorrect customer name");
+        throw new Error(
+          "Test suite file does not exist" +
+            filePath.replace(
+              "replaceWithCustomerName",
+              testModuleValue.toLowerCase()
+            )
+        );
       } else {
         fileName = filePath.replace(
           "replaceWithCustomerName",
@@ -181,52 +216,62 @@ export class Utils {
     return import(`${process.cwd()}/${fileName}`);
   }
 
-  writeToMasterTestSuite(props: PropsType) {
-    return new Promise((resolve, reject) => {
-      fs.writeFile(props.testSuitePath, props.objectToWrite, (err: any) => {
-        if (err) {
-          reject(
-            new Error(
-              `Error writing to test suite collection master ${err.message}`
-            )
-          );
-        } else {
-          resolve("Updated test suite collection successfully!");
-        }
+  async createDirectory(path: string) {
+    try {
+      await fs.promises.mkdir(path, { recursive: true });
+    } catch (err: any) {
+      Logger.log(`src.lib.Utils : Error creating directory ${err.message}`);
+      throw err;
+    }
+  }
+  async writeFile(props: IWriteToDirectory) {
+    try {
+      await this.createDirectory(props.directoryPath);
+      await fs.promises.writeFile(
+        `${props.directoryPath}${props.fileName}`,
+        props.data
+      );
+      return this.checkIfFileExists({
+        filePath: `${props.directoryPath}${props.fileName}`,
+        pathInCwd: true,
+        timerInMs: 5000,
       });
-    });
+    } catch (err: any) {
+      console.log(
+        `Error writing to test suite collection master ${err.message}`
+      );
+      throw err;
+    }
   }
 
   // 2. Resolve the test suites collection from multiple modules,to form a master test suite
   async resolveMultipleModuleSuites(testModuleListFromExec: string) {
     const allSuites = await this.listTestSuitePaths(testModuleListFromExec);
+    console.log("1111111111@@@@@");
     let objectToWrite = `module.exports= ${JSON.stringify(
       allSuites[Object.keys(allSuites)[0]]
     ).replace(/"([^(")"]+)":/g, "$1:")}`;
     objectToWrite = objectToWrite.replace(
-      "features/",
+      /features\//g,
       `src/customers/${testModuleListFromExec.toLocaleLowerCase()}/features/`
     );
-    const testSuitePath = `dist/src/customers/${testModuleListFromExec.toLocaleLowerCase()}/test-suite/test-suites-collection-modified.js`;
+    console.log("change", objectToWrite);
 
-    await this.writeToMasterTestSuite({
-      testSuitePath,
-      objectToWrite,
+    const directoryPath = `dist/src/test-suites/${testModuleListFromExec.toLocaleLowerCase()}/`;
+    const fileName = `test-suites-collection.js`;
+
+    const fileWritten = await this.writeFile({
+      directoryPath,
+      fileName,
+      data: objectToWrite,
     });
 
-    let fileExists = await this.checkIfFileExists({
-      filePath: testSuitePath,
-      pathInCwd: true,
-    });
-
-    while (!fileExists) {
-      console.log("file not present");
-      fileExists = await this.checkIfFileExists({
-        filePath: testSuitePath,
-        pathInCwd: true,
-      });
+    if (fileWritten) {
+      console.log("Updated test suite collection successfully!");
+      return 0;
+    } else {
+      return 1;
     }
-    return 0;
   }
 
   getRequestLocalChromeVersion(options: IRequestLocalChromeVersion) {
