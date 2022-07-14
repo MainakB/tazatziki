@@ -6,5 +6,6 @@ export const GLOBALFLAGS: IAppConstants = {
   RECOVERYWAITTIME: 80000,
   LOGTYPE: LOGTYPESLIST.TRACE,
   DEFAULTBROWSER: "chrome",
+  STEPDEFPATH: "src/services/**/step-definitions/**/*.ts",
   // Level of logging verbosity: trace | debug | info | warn | error | silent
 };

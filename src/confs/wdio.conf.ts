@@ -89,13 +89,8 @@ export const config: Options.Testrunner = {
   // Sauce Labs platform configurator - a great tool to configure your capabilities:
   // https://saucelabs.com/platform/platform-configurator
   //
-  capabilities: (() => {
-    console.log(
-      "Setting caps in wdio conf file capabilities object",
-      RuntimeConfigs.getInstance().getBrowserCaps()
-    );
-    return RuntimeConfigs.getInstance().getBrowserCaps();
-  })(),
+  capabilities: [],
+  // RuntimeConfigs.getInstance().getBrowserCaps(),
   //  [
   //   {
   //     // maxInstances can get overwritten per capability. So if you have an in-house Selenium
@@ -218,11 +213,11 @@ export const config: Options.Testrunner = {
   // If you are using Cucumber you need to specify the location of your step definitions.
   cucumberOpts: {
     // <string[]> (file/dir) require files before executing features
-    // require: [
-    //   // "./features/step-definitions/steps.ts",
-    //   // "src/services/Reporter.ts",
-    //   "customers/generic/step-definitions/**/*.ts",
-    // ],
+    require: [
+      GLOBALFLAGS.STEPDEFPATH,
+      // "src/services/Reporter.ts",
+      // "customers/generic/step-definitions/**/*.ts",
+    ],
     // <boolean> show full backtrace for errors
     backtrace: false,
     // <string[]> ("extension:module") require files with the given EXTENSION after requiring MODULE (repeatable)
@@ -260,9 +255,10 @@ export const config: Options.Testrunner = {
    */
   onPrepare: function (_config: any, _capabilities: any) {
     LocatorsCache.getInstance();
-
+    this.capabilities = RuntimeConfigs.getInstance().getBrowserCaps();
     console.log(
       "***************, confs",
+      this,
       RuntimeConfigs._instance,
       RuntimeConfigs.getInstance().getBrowserCaps()
     );
