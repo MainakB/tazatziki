@@ -82,9 +82,16 @@ export type IAppConstants = {
   STEPDEFPATH: string;
 };
 
-export type PropsType = {
-  testSuitePath: string;
-  objectToWrite: string;
+export type IWriteToDirectory = {
+  directoryPath: string;
+  data: string;
+  fileName: string;
+};
+
+export type ICheckFileExists = {
+  filePath: string;
+  pathInCwd?: boolean;
+  timerInMs?: number;
 };
 
 export interface IRuntimeParameters {

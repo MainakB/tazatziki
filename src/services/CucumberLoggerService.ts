@@ -1,5 +1,5 @@
 export class CucumberLoggerService {
-  static _instance: CucumberLoggerService;
+  private static _instance: CucumberLoggerService;
   private message: string | null = null;
 
   private constructor() {}

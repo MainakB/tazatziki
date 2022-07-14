@@ -63,7 +63,7 @@ import * as commonLocators from "./locators-common";
 // };
 
 export class LocatorsCache {
-  static _instance: LocatorsCache;
+  private static _instance: LocatorsCache;
   cachedLocators: any;
   commonPoList: any[];
 

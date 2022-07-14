@@ -33,6 +33,7 @@
 import cucumberJson from "wdio-cucumberjs-json-reporter";
 import * as fs from "fs";
 import { CucumberLoggerService } from "./CucumberLoggerService";
+import { RuntimeConfigs } from "../services/RuntimeConfigs";
 
 const dir: string = `${process.cwd()}/Reports`;
 
@@ -46,6 +47,8 @@ export const hooks = {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
+
+    this.suites = RuntimeConfigs.getInstance().getSuites();
   },
 
   afterStep: async function (

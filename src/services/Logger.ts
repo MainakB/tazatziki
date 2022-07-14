@@ -55,8 +55,8 @@ const options = {
 };
 //     Level of logging verbosity: trace | debug | info | warn | error | silent
 class LoggerService {
-  logger: winston.Logger;
-  static _instance: LoggerService;
+  private logger: winston.Logger;
+  private static _instance: LoggerService;
   private constructor() {
     this.logger = winston.createLogger({
       levels: customLevels.levels,
