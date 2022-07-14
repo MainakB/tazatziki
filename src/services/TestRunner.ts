@@ -30,9 +30,20 @@ export class TestRunner {
     args?: any;
     browser?: string | string[];
   }) {
-    _initargs.browser
-      ? RuntimeConfigs.getInstance(_initargs.browser)
-      : RuntimeConfigs.getInstance();
+    console.log(
+      "init browser 2",
+      _initargs.browser,
+      typeof _initargs.browser,
+      (Array.isArray(_initargs.browser) && _initargs.browser.length) ||
+        (!Array.isArray(_initargs.browser) && _initargs.browser)
+    );
+    if (
+      (Array.isArray(_initargs.browser) && _initargs.browser.length) ||
+      (!Array.isArray(_initargs.browser) && _initargs.browser)
+    ) {
+      RuntimeConfigs.getInstance().setBrowser(_initargs.browser);
+    }
+
     await multiCapabilities();
     _initargs.args._args = {
       ...(_initargs.args._args || {}),

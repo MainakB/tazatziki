@@ -17,7 +17,10 @@ export class RuntimeConfigs {
 
   static getInstance(browser?: string[] | string, browserVersion?: string) {
     if (!RuntimeConfigs._instance) {
-      if (browser) {
+      if (
+        (Array.isArray(browser) && browser.length) ||
+        (!Array.isArray(browser) && browser)
+      ) {
         RuntimeConfigs._instance = new RuntimeConfigs({
           browser,
           browserVersion,
@@ -43,6 +46,10 @@ export class RuntimeConfigs {
 
   getCustomer(): string {
     return this.customer;
+  }
+
+  setBrowser(browser: string | string[]): void {
+    this.browser = browser;
   }
 
   getBrowser(): string | string[] {

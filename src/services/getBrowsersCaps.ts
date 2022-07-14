@@ -24,7 +24,7 @@ const getCaps = async (option: string) => {
     //   return setParallelBrowserCount(browserCaps.chromeDefaultCapabilities);
     // case "edge":
     //   return setParallelBrowserCount(browserCaps.microsoftEdgeCapabilities);
-    case "safariDefaultCapabilities":
+    case "safari":
       return browserCaps.safariDefaultCapabilities;
     default:
       Logger.info("Terminating test.Incorrect browser stack");
@@ -35,10 +35,17 @@ const getCaps = async (option: string) => {
 
 export const multiCapabilities = async () => {
   const browser = runtimeConfigs.getBrowser();
-
-  //   process.env.BROWSERNAME!;
   let browserCapsList = [];
-  const valSent = Array.isArray(browser) ? browser : new Array(browser);
+  let valSent: string | string[] = "";
+  if (browser.indexOf(",") > -1) {
+    valSent = (browser as string).replace("[", "");
+    valSent = valSent.replace("]", "");
+    valSent = valSent.slice(0, browser.length).split(",");
+  } else {
+    valSent = new Array(browser as string);
+  }
+  // const valSent = browser.indexOf(',') > -1 ? browser.replace('[').slice(0, browser.length).split(',') : new Array(browser);
+  // const valSent = Array.isArray(browser) ? browser : new Array(browser.split(','));
   // for (let i = 0; i < valSent.length; i++) {
   //   const cap = await getCaps(valSent[i]);
   //   console.log("caop received is", cap);
@@ -47,7 +54,6 @@ export const multiCapabilities = async () => {
   browserCapsList = await Promise.all(
     valSent.map(async (browserVal) => await getCaps(browserVal))
   ).then((caps) => caps);
-  console.log("set browser cap is", browserCapsList);
   runtimeConfigs.setBrowserCaps(browserCapsList);
 };
 
