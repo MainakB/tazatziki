@@ -61,7 +61,7 @@ export const config: Options.Testrunner = {
   // then the current working directory is where your `package.json` resides, so `wdio`
   // will be called from there.
   //
-  // specs: ["customers/generic/features/**/*.feature"],
+  specs: [],
   // ["./features/**/*.feature"],
   // Patterns to exclude.
   exclude: [
@@ -253,16 +253,8 @@ export const config: Options.Testrunner = {
    * @param {Object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  onPrepare: function (config: any, _capabilities: any) {
+  onPrepare: function (_config: any, _capabilities: any) {
     LocatorsCache.getInstance();
-    console.log(
-      "\n\nget specs*************",
-      Object.values(RuntimeConfigs.getInstance().getSuites()),
-      this
-    );
-    config.specs = Object.values(RuntimeConfigs.getInstance().getSuites());
-
-    console.log("\n\nafter specs setup*************", this);
   },
   /**
    * Gets executed before a worker process is spawned and can be used to initialise specific service
@@ -273,9 +265,16 @@ export const config: Options.Testrunner = {
    * @param  {[type]} args     object that will be merged with the main configuration once worker is initialized
    * @param  {[type]} execArgv list of string arguments passed to the worker process
    */
-  // onWorkerStart: function (_cid, _caps, _specs, _args, _execArgv) {
-
-  // },
+  //  @ts-ignore
+  onWorkerStart: function (_cid, _caps, specs, _args, _execArgv) {
+    console.log(
+      "\n\nget specs*************",
+      Object.values(RuntimeConfigs.getInstance().getSuites()),
+      this
+    );
+    this.specs = Object.values(RuntimeConfigs.getInstance().getSuites());
+    console.log("\n\nafter specs setup*************", this);
+  },
   /**
    * Gets executed just after a worker process has exited.
    * @param  {String} cid      capability id (e.g 0-0)
