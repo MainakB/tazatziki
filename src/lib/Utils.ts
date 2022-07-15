@@ -103,7 +103,7 @@ export class Utils {
   moveFile(params: { src: string; dest: string }) {
     fs.rename(params.src, params.dest, (err) => {
       if (err) {
-        console.log(err);
+        throw err;
       }
     });
   }
@@ -239,8 +239,8 @@ export class Utils {
         timerInMs: 5000,
       });
     } catch (err: any) {
-      console.log(
-        `Error writing to test suite collection master ${err.message}`
+      Logger.log(
+        `src.lib.Utils.writeFile : Error writing to test suite collection master ${err.message}`
       );
       throw err;
     }
@@ -251,7 +251,6 @@ export class Utils {
     testModuleListFromExec: string
   ): Promise<object> {
     const allSuites = await this.listTestSuitePaths(testModuleListFromExec);
-    console.log("all siuite now", allSuites);
     let suiteObject = JSON.stringify(allSuites).replace(
       /features\//g,
       `src/customers/${testModuleListFromExec.toLocaleLowerCase()}/features/`
@@ -262,7 +261,6 @@ export class Utils {
   async resolveTestSuiteCollection(suiteNames: string, suiteObject: object) {
     let testSuite = {};
     let missingTestSuite = [];
-    console.log("term", suiteNames, suiteObject);
     for (let suiteName of suiteNames) {
       if ((suiteObject as any)[suiteName]) {
         testSuite = {
@@ -275,7 +273,7 @@ export class Utils {
     }
     if (missingTestSuite.length) {
       Logger.log(
-        `src.lib/Utils.resolveTestSuiteCollection : Following test suites are missing in the test suite collection - ${missingTestSuite}. Please make sure the test suite is present in the test suite collections file.`
+        `src.lib.Utils.resolveTestSuiteCollection : Following test suites are missing in the test suite collection - ${missingTestSuite}. Please make sure the test suite is present in the test suite collections file.`
       );
     }
 
@@ -364,7 +362,6 @@ export class Utils {
           .replace(/\]\",\"/g, "],")
       );
     }
-    console.log("testSuiteParam next", testSuiteParam);
 
     const suiteObject = await this.resolveMultipleModuleSuites(customer);
     return this.resolveTestSuiteCollection(testSuiteParam, suiteObject);

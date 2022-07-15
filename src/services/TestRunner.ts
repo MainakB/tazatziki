@@ -22,8 +22,6 @@ export class TestRunner {
   }
 
   async runTest() {
-    console.log("start test run");
-
     return WdioLauncher.getInstance().run();
     // return new Promise((_resolve, reject) => reject(1));
   }
@@ -33,7 +31,7 @@ export class TestRunner {
     suites: string;
     customer: string;
     args?: { _args: object; __configFilePath?: string };
-    browser?: string | string[];
+    browser?: string;
   }) {
     if (
       (Array.isArray(_initargs.browser) && _initargs.browser.length) ||

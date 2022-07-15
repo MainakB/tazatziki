@@ -6,7 +6,7 @@ export class RuntimeConfigs {
 
   private suites: string[] | string = [];
   private customer: string = "";
-  private browser: string[] | string = GLOBALFLAGS.DEFAULTBROWSER;
+  private browser: string = GLOBALFLAGS.DEFAULTBROWSER;
   private browserVersion: string = "";
   private browserCaps: any[] = [];
 
@@ -15,7 +15,7 @@ export class RuntimeConfigs {
     this.browserVersion = args?.browserVersion ?? this.browserVersion;
   }
 
-  static getInstance(browser?: string[] | string, browserVersion?: string) {
+  static getInstance(browser?: string, browserVersion?: string) {
     if (!RuntimeConfigs._instance) {
       if (
         (Array.isArray(browser) && browser.length) ||
@@ -48,11 +48,11 @@ export class RuntimeConfigs {
     return this.customer;
   }
 
-  setBrowser(browser: string | string[]): void {
+  setBrowser(browser: string): void {
     this.browser = browser;
   }
 
-  getBrowser(): string | string[] {
+  getBrowser(): string {
     return this.browser;
   }
 

@@ -271,9 +271,8 @@ export const config: Options.Testrunner = {
    * @param  {[type]} args     object that will be merged with the main configuration once worker is initialized
    * @param  {[type]} execArgv list of string arguments passed to the worker process
    */
-  onWorkerStart: function (_cid, _caps, _specs, _args, _execArgv) {
-    console.log("\n\nafter specs setup*************", this);
-  },
+  // onWorkerStart: function (_cid, _caps, _specs, _args, _execArgv) {
+  // },
   /**
    * Gets executed just after a worker process has exited.
    * @param  {String} cid      capability id (e.g 0-0)
@@ -481,24 +480,7 @@ export const config: Options.Testrunner = {
     fs.renameSync(oldPath, newPath);
   },
   ...hooks,
-  // onComplete: function () {
-  //   const reportError = new Error("Could not generate Allure report");
-  //   const generation = allure(["generate", "allure-results", "--clean"]);
-  //   return new Promise((resolve, reject) => {
-  //     const generationTimeout = setTimeout(() => reject(reportError), 5000);
 
-  //     generation.on("exit", function (exitCode) {
-  //       clearTimeout(generationTimeout);
-
-  //       if (exitCode !== 0) {
-  //         return reject(reportError);
-  //       }
-
-  //       console.log("Allure report successfully generated");
-  //       resolve("Allure report successfully generated");
-  //     });
-  //   });
-  // },
   /**
    * Gets executed when a refresh happens.
    * @param {String} oldSessionId session ID of the old session

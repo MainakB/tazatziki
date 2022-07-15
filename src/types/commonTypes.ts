@@ -95,7 +95,7 @@ export type ICheckFileExists = {
 };
 
 export interface IRuntimeParameters {
-  browser?: string[] | string;
+  browser?: string;
   browserVersion?: string;
 }
 
