@@ -4,6 +4,7 @@ import { LocatorsCache } from "../services/LocatorsCache";
 import { StepDurationCalculator } from "../services/StepDurationCalculator";
 // import * as allure from "allure-commandline";
 import { Logger } from "../services/Logger";
+import { CdnFileMerger } from "../services/CdnFileMerger";
 import { GLOBALFLAGS } from "../constants";
 import { hooks } from "../services/hooks";
 import * as path from "path";
@@ -478,6 +479,7 @@ export const config: Options.Testrunner = {
     );
     const newPath = path.resolve(process.cwd(), "Reports/results.json");
     fs.renameSync(oldPath, newPath);
+    CdnFileMerger();
   },
   ...hooks,
 
