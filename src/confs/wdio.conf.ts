@@ -5,7 +5,7 @@ import { Logger } from "../services/Logger";
 import { GLOBALFLAGS } from "../constants";
 import { hooks } from "../services/hooks";
 
-const Video = require("wdio-video-reporter");
+// const Video = require("wdio-video-reporter");
 (global as any).Logger = Logger;
 
 export const config: Options.Testrunner = {
@@ -185,13 +185,13 @@ export const config: Options.Testrunner = {
   reporters: [
     "spec",
     // "junit",
-    [
-      Video,
-      {
-        saveAllVideos: false, // If true, also saves videos for successful test cases
-        videoSlowdownMultiplier: 3, // Higher to get slower videos, lower for faster videos [Value 1-100]
-      },
-    ],
+    // [
+    //   Video,
+    //   {
+    //     saveAllVideos: false, // If true, also saves videos for successful test cases
+    //     videoSlowdownMultiplier: 3, // Higher to get slower videos, lower for faster videos [Value 1-100]
+    //   },
+    // ],
     // [
     //   "allure",
     //   {
