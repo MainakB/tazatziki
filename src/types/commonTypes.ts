@@ -100,10 +100,17 @@ export interface IRuntimeParameters {
 }
 
 export interface ICucumberOptsParams {
-  suites: string[];
-  tags: string;
-  // browserVersion?: string;
-  // browserCaps?: any[];
+  require?: string[];
+  backtrace?: boolean;
+  requireModule?: (string | never)[];
+  dryRun?: boolean;
+  failFast?: boolean;
+  snippets?: boolean;
+  source?: boolean;
+  strict?: boolean;
+  tagExpression?: string;
+  timeout?: number;
+  ignoreUndefinedDefinitions?: boolean;
 }
 
 export type IRequestLocalChromeVersion = {

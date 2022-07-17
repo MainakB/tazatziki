@@ -2,6 +2,7 @@ import { WdioLauncher } from "./WdioLauncher";
 import { RuntimeConfigs } from "./RuntimeConfigs";
 import { multiCapabilities } from "../services";
 import { Utils } from "../lib";
+import { CucumberOptsService } from "./CucumberOptsService";
 
 export class TestRunner {
   private static _instance: TestRunner;
@@ -26,37 +27,81 @@ export class TestRunner {
     // return new Promise((_resolve, reject) => reject(1));
   }
 
-  async initConfigs(_initargs: {
-    testType: string;
-    suites: string;
+  async setWdioConfigs(_setargs: {
+    suites: any;
     customer: string;
-    args?: { _args: object; __configFilePath?: string };
-    browser?: string;
+    tagExpression: string;
+    args: any;
+    testType: string;
   }) {
-    if (
-      (Array.isArray(_initargs.browser) && _initargs.browser.length) ||
-      (!Array.isArray(_initargs.browser) && _initargs.browser)
-    ) {
-      RuntimeConfigs.getInstance().setBrowser(_initargs.browser);
-    }
     const testSpecs = await Utils.getInstance().resolveTestSuite(
-      _initargs.suites,
-      _initargs.customer
+      _setargs.suites,
+      _setargs.customer
     );
     await multiCapabilities();
+
+    _setargs.args._args = {
+      ..._setargs.args._args,
+      capabilities: RuntimeConfigs.getInstance().getBrowserCaps(),
+      suites: testSpecs.testSuite,
+      suite: testSpecs.suiteNames,
+      cucumberOpts: {
+        ...CucumberOptsService.getInstance({
+          tagExpression: _setargs.tagExpression,
+        }),
+      },
+    };
+
+    this.initTestLauncher(_setargs.testType, _setargs.args);
+  }
+
+  async initConfigs(_initargs: {
+    gruntobj: any;
+    args?: { _args: object; __configFilePath?: string };
+    testType?: string;
+  }) {
+    const browser = _initargs.gruntobj.option("browser");
+    const suites = _initargs.gruntobj.option("suites");
+    const customer = _initargs.gruntobj.option("customer");
+    const tagExpression = _initargs.gruntobj.option("tags");
+    const testType = _initargs.testType || "wdio";
 
     if (!_initargs.args) {
       _initargs.args = {
         _args: {},
       };
     }
-    _initargs.args._args = {
-      ..._initargs.args._args,
-      capabilities: RuntimeConfigs.getInstance().getBrowserCaps(),
-      suites: testSpecs.testSuite,
-      suite: testSpecs.suiteNames,
-    };
 
-    this.initTestLauncher(_initargs.testType, _initargs.args);
+    if (
+      (Array.isArray(browser) && browser) ||
+      (!Array.isArray(browser) && browser)
+    ) {
+      RuntimeConfigs.getInstance().setBrowser(browser);
+    }
+    // const testSpecs = await Utils.getInstance().resolveTestSuite(
+    //   suites,
+    //   customer
+    // );
+    // await multiCapabilities();
+
+    // _initargs.args._args = {
+    //   ..._initargs.args._args,
+    //   capabilities: RuntimeConfigs.getInstance().getBrowserCaps(),
+    //   suites: testSpecs.testSuite,
+    //   suite: testSpecs.suiteNames,
+    //   cucumberOpts: {
+    //     ...CucumberOptsService.getInstance({ tagExpression }),
+    //   },
+    // };
+    if (testType === "wdio") {
+      this.setWdioConfigs({
+        suites,
+        customer,
+        tagExpression,
+        args: _initargs.args,
+        testType,
+      });
+    }
+    // this.initTestLauncher(testType, _initargs.args);
   }
 }

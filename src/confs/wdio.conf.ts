@@ -1,14 +1,10 @@
 import type { Options } from "@wdio/types";
-const { generate } = require("multiple-cucumber-html-reporter");
-import { LocatorsCache } from "../services/LocatorsCache";
-import { StepDurationCalculator } from "../services/StepDurationCalculator";
 // import * as allure from "allure-commandline";
 import { Logger } from "../services/Logger";
-import { CdnFileMerger } from "../services/CdnFileMerger";
+
 import { GLOBALFLAGS } from "../constants";
 import { hooks } from "../services/hooks";
-import * as path from "path";
-import * as fs from "fs";
+
 const Video = require("wdio-video-reporter");
 (global as any).Logger = Logger;
 
@@ -217,270 +213,34 @@ export const config: Options.Testrunner = {
 
   //
   // If you are using Cucumber you need to specify the location of your step definitions.
-  cucumberOpts: {
-    // <string[]> (file/dir) require files before executing features
-    require: [
-      GLOBALFLAGS.STEPDEFPATH,
-      // "src/services/Reporter.ts",
-      // "customers/generic/step-definitions/**/*.ts",
-    ],
-    // <boolean> show full backtrace for errors
-    backtrace: false,
-    // <string[]> ("extension:module") require files with the given EXTENSION after requiring MODULE (repeatable)
-    requireModule: [],
-    // <boolean> invoke formatters without executing steps
-    dryRun: false,
-    // <boolean> abort the run on first failure
-    failFast: false,
-    // <boolean> hide step definition snippets for pending steps
-    snippets: true,
-    // <boolean> hide source uris
-    source: true,
-    // <boolean> fail if there are any undefined or pending steps
-    strict: false,
-    // <string> (expression) only execute the features or scenarios with tags matching the expression
-    tagExpression: "",
-    // <number> timeout for step definitions
-    timeout: GLOBALFLAGS.STEPTIMEOUTWAITTIME,
-    // <boolean> Enable this config to treat undefined definitions as warnings.
-    ignoreUndefinedDefinitions: false,
-  },
-
-  //
-  // =====
-  // Hooks
-  // =====
-  // WebdriverIO provides several hooks you can use to interfere with the test process in order to enhance
-  // it and to build services around it. You can either apply a single function or an array of
-  // methods to it. If one of them returns with a promise, WebdriverIO will wait until that promise got
-  // resolved to continue.
-  /**
-   * Gets executed once before all workers get launched.
-   * @param {Object} config wdio configuration object
-   * @param {Array.<Object>} capabilities list of capabilities details
-   */
-  onPrepare: function (_config: any, _capabilities: any) {
-    LocatorsCache.getInstance();
-    console.log("\n\nOn prep", this);
-  },
-  /**
-   * Gets executed before a worker process is spawned and can be used to initialise specific service
-   * for that worker as well as modify runtime environments in an async fashion.
-   * @param  {String} cid      capability id (e.g 0-0)
-   * @param  {[type]} caps     object containing capabilities for session that will be spawn in the worker
-   * @param  {[type]} specs    specs to be run in the worker process
-   * @param  {[type]} args     object that will be merged with the main configuration once worker is initialized
-   * @param  {[type]} execArgv list of string arguments passed to the worker process
-   */
-  // onWorkerStart: function (_cid, _caps, _specs, _args, _execArgv) {
+  // cucumberOpts: {
+  //   // <string[]> (file/dir) require files before executing features
+  //   require: [
+  //     GLOBALFLAGS.STEPDEFPATH,
+  //     // "src/services/Reporter.ts",
+  //     // "customers/generic/step-definitions/**/*.ts",
+  //   ],
+  //   // <boolean> show full backtrace for errors
+  //   backtrace: false,
+  //   // <string[]> ("extension:module") require files with the given EXTENSION after requiring MODULE (repeatable)
+  //   requireModule: [],
+  //   // <boolean> invoke formatters without executing steps
+  //   dryRun: false,
+  //   // <boolean> abort the run on first failure
+  //   failFast: false,
+  //   // <boolean> hide step definition snippets for pending steps
+  //   snippets: true,
+  //   // <boolean> hide source uris
+  //   source: true,
+  //   // <boolean> fail if there are any undefined or pending steps
+  //   strict: false,
+  //   // <string> (expression) only execute the features or scenarios with tags matching the expression
+  //   tagExpression: "",
+  //   // <number> timeout for step definitions
+  //   timeout: GLOBALFLAGS.STEPTIMEOUTWAITTIME,
+  //   // <boolean> Enable this config to treat undefined definitions as warnings.
+  //   ignoreUndefinedDefinitions: false,
   // },
-  /**
-   * Gets executed just after a worker process has exited.
-   * @param  {String} cid      capability id (e.g 0-0)
-   * @param  {Number} exitCode 0 - success, 1 - fail
-   * @param  {[type]} specs    specs to be run in the worker process
-   * @param  {Number} retries  number of retries used
-   */
-  // onWorkerEnd: function (cid, exitCode, specs, retries) {
-  // },
-  /**
-   * Gets executed just before initialising the webdriver session and test framework. It allows you
-   * to manipulate configurations depending on the capability or spec.
-   * @param {Object} config wdio configuration object
-   * @param {Array.<Object>} capabilities list of capabilities details
-   * @param {Array.<String>} specs List of spec file paths that are to be run
-   * @param {String} cid worker id (e.g. 0-0)
-   */
-  // beforeSession: function (_config, _capabilities, _specs, _cid) {
-  //   // console.log(
-  //   //   "get specs",
-  //   //   Object.values(RuntimeConfigs.getInstance().getSuites())
-  //   // );
-
-  //   // this.suites = RuntimeConfigs.getInstance().getSuites();
-  // },
-  /**
-   * Gets executed before test execution begins. At this point you can access to all global
-   * variables like `browser`. It is the perfect place to define custom commands.
-   * @param {Array.<Object>} capabilities list of capabilities details
-   * @param {Array.<String>} specs        List of spec file paths that are to be run
-   * @param {Object}         browser      instance of created browser/device session
-   */
-  // before: function (capabilities, specs) {
-  // },
-  /**
-   * Runs before a WebdriverIO command gets executed.
-   * @param {String} commandName hook command name
-   * @param {Array} args arguments that command would receive
-   */
-  // beforeCommand: function (commandName, args) {
-  // const configStepTimeOut: number = this.cucumberOpts.timeout;
-  // const startTime = StepDurationCalculator.getInstance()
-  //   .getDateTime()
-  //   .getTime();
-
-  // const maxWaitTimeInstance = StepDurationCalculator.getInstance();
-  // maxWaitTimeInstance.setActionDateTime();
-  // const maxWaitTime = maxWaitTimeInstance.getActionDateTime().getTime();
-
-  // let stepDistance = distance(maxWaitTime, startTime, configStepTimeOut);
-  // let actionDistance = distance(
-  //   maxWaitTime,
-  //   startTime,
-  //   StepDurationCalculator.getInstance().getActionWaitConditionTime()
-  // );
-  // console.log("command name", commandName, args);
-  // if (actionDistance <= 0 || stepDistance <= 10000) {
-  //   console.log(
-  //     `wdio.conf.beforeCommand : Stopping step as the time distances are to expire ${JSON.stringify(
-  //       { actionDistance, stepDistance },
-  //       null,
-  //       4
-  //     )}`
-  //   );
-  //   StepDurationCalculator.getInstance().setStopStep(true);
-  // } else {
-  //   StepDurationCalculator.getInstance().setStopStep(false);
-  // }
-  // },
-  /**
-   * Cucumber Hooks
-   *
-   * Runs before a Cucumber Feature.
-   * @param {String}                   uri      path to feature file
-   * @param {GherkinDocument.IFeature} feature  Cucumber feature object
-   */
-  // beforeFeature: function (uri, feature) {
-  // },
-  /**
-   *
-   * Runs before a Cucumber Scenario.
-   * @param {ITestCaseHookParameter} world    world object containing information on pickle and test step
-   * @param {Object}                 context  Cucumber World object
-   */
-  // beforeScenario: function (world, context) {
-  // },
-  /**
-   *
-   * Runs before a Cucumber Step.
-   * @param {Pickle.IPickleStep} step     step data
-   * @param {IPickle}            scenario scenario pickle
-   * @param {Object}             context  Cucumber World object
-   */
-  beforeStep: function (_step: any, _scenario: any, _context: any) {
-    StepDurationCalculator.getInstance().setDateTime();
-  },
-  /**
-   *
-   * Runs after a Cucumber Step.
-   * @param {Pickle.IPickleStep} step             step data
-   * @param {IPickle}            scenario         scenario pickle
-   * @param {Object}             result           results object containing scenario results
-   * @param {boolean}            result.passed    true if scenario has passed
-   * @param {string}             result.error     error stack if scenario failed
-   * @param {number}             result.duration  duration of scenario in milliseconds
-   * @param {Object}             context          Cucumber World object
-   */
-  // afterStep: function (step, scenario, result, context) {
-  // },
-
-  /**
-   *
-   * Runs after a Cucumber Scenario.
-   * @param {ITestCaseHookParameter} world            world object containing information on pickle and test step
-   * @param {Object}                 result           results object containing scenario results
-   * @param {boolean}                result.passed    true if scenario has passed
-   * @param {string}                 result.error     error stack if scenario failed
-   * @param {number}                 result.duration  duration of scenario in milliseconds
-   * @param {Object}                 context          Cucumber World object
-   */
-  // afterScenario: function (world, result, context) {
-  // },
-  /**
-   *
-   * Runs after a Cucumber Feature.
-   * @param {String}                   uri      path to feature file
-   * @param {GherkinDocument.IFeature} feature  Cucumber feature object
-   */
-  // afterFeature: function (uri, feature) {
-  // },
-
-  /**
-   * Runs after a WebdriverIO command gets executed
-   * @param {String} commandName hook command name
-   * @param {Array} args arguments that command would receive
-   * @param {Number} result 0 - command success, 1 - command error
-   * @param {Object} error error object if any
-   */
-  // afterCommand: function (commandName, args, result, error) {
-  // },
-  /**
-   * Gets executed after all tests are done. You still have access to all global variables from
-   * the test.
-   * @param {Number} result 0 - test pass, 1 - test fail
-   * @param {Array.<Object>} capabilities list of capabilities details
-   * @param {Array.<String>} specs List of spec file paths that ran
-   */
-  // after: function (result, capabilities, specs) {
-  // },
-  /**
-   * Gets executed right after terminating the webdriver session.
-   * @param {Object} config wdio configuration object
-   * @param {Array.<Object>} capabilities list of capabilities details
-   * @param {Array.<String>} specs List of spec file paths that ran
-   */
-  // afterSession: function (config, capabilities, specs) {
-  // },
-  /**
-   * Gets executed after all workers got shut down and the process is about to exit. An error
-   * thrown in the onComplete hook will result in the test run failing.
-   * @param {Object} exitCode 0 - success, 1 - fail
-   * @param {Object} config wdio configuration object
-   * @param {Array.<Object>} capabilities list of capabilities details
-   * @param {<Object>} results object containing test results
-   */
-  // onComplete: function(exitCode, config, capabilities, results) {
-  // },
-  //
-
-  onComplete: function (
-    _exitCode: any,
-    _config: any,
-    _capabilities: any,
-    _results: any
-  ) {
-    // Generate the report when it all tests are done
-    generate({
-      // Required
-      // This part needs to be the same path where you store the JSON files
-      // default = '.tmp/json/'
-      jsonDir: "Reports/json-output-folder/",
-      reportPath: "Reports/report/",
-      saveCollectedJSON: true,
-      displayDuration: true,
-      // for more options see https://github.com/wswebcreation/multiple-cucumber-html-reporter#options
-      customData: {
-        title: "Service info",
-        data: [
-          { label: "Project", value: "Custom project" },
-          { label: "Release", value: "1.2.3" },
-          { label: "Cycle", value: "B11221.34321" },
-          {
-            label: "Execution Start Time",
-            value: "Nov 19th 2017, 02:31 PM EST",
-          },
-          { label: "Execution End Time", value: "Nov 19th 2017, 02:56 PM EST" },
-        ],
-      },
-    });
-    const oldPath = path.resolve(
-      process.cwd(),
-      "Reports/report/merged-output.json"
-    );
-    const newPath = path.resolve(process.cwd(), "Reports/results.json");
-    fs.renameSync(oldPath, newPath);
-    CdnFileMerger();
-  },
   ...hooks,
 
   /**
