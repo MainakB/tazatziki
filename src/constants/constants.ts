@@ -8,8 +8,8 @@ export const GLOBALFLAGS: IAppConstants = {
   DEFAULTBROWSER: "chrome",
   STEPDEFPATH: [
     "src/services/**/step-definitions/**/*.ts",
-    // "node_modules/@kaniamb/tzatziki-bl/src/services/**/step-definitions/**/*.ts",
-    "../tzatziki-bl/src/services/**/step-definitions/**/*.ts",
+    "node_modules/@kaniamb/tzatziki-bl/dist/src/services/**/step-definitions/**/*.js",
+    // "../tzatziki-bl/src/services/**/step-definitions/**/*.ts",
   ],
   // Level of logging verbosity: trace | debug | info | warn | error | silent
 };
