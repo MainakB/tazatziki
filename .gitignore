@@ -2,6 +2,7 @@ dist
 .vscode
 node_modules
 Reports
+_results_
 wdio.d.ts
 .DS_Store
 Gruntfile.js

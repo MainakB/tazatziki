@@ -49,6 +49,7 @@ export class TestRunner {
         ...CucumberOptsService.getInstance({
           tagExpression: _setargs.tagExpression,
         }),
+        // tagExpression: "@smoke",
       },
     };
 
