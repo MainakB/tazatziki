@@ -1,37 +1,9 @@
 import { GLOBALFLAGS } from "../constants";
 import { ICucumberOptsParams } from "../types";
 
-// cucumberOpts: {
-//     // <string[]> (file/dir) require files before executing features
-//     require: [
-//       GLOBALFLAGS.STEPDEFPATH,
-//       // "src/services/Reporter.ts",
-//       // "customers/generic/step-definitions/**/*.ts",
-//     ],
-//     // <boolean> show full backtrace for errors
-//     backtrace: false,
-//     // <string[]> ("extension:module") require files with the given EXTENSION after requiring MODULE (repeatable)
-//     requireModule: [],
-//     // <boolean> invoke formatters without executing steps
-//     dryRun: false,
-//     // <boolean> abort the run on first failure
-//     failFast: false,
-//     // <boolean> hide step definition snippets for pending steps
-//     snippets: true,
-//     // <boolean> hide source uris
-//     source: true,
-//     // <boolean> fail if there are any undefined or pending steps
-//     strict: false,
-//     // <string> (expression) only execute the features or scenarios with tags matching the expression
-//     tagExpression: "",
-//     // <number> timeout for step definitions
-//     timeout: GLOBALFLAGS.STEPTIMEOUTWAITTIME,
-//     // <boolean> Enable this config to treat undefined definitions as warnings.
-//     ignoreUndefinedDefinitions: false,
-//   },
 export class CucumberOptsService {
   static _instance: CucumberOptsService;
-  private require = [GLOBALFLAGS.STEPDEFPATH];
+  private require = [...GLOBALFLAGS.STEPDEFPATH];
   private backtrace = false;
   private requireModule = [];
 

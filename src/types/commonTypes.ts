@@ -79,7 +79,7 @@ export type IAppConstants = {
   RECOVERYWAITTIME: number;
   LOGTYPE: Options.WebDriverLogTypes;
   DEFAULTBROWSER: string;
-  STEPDEFPATH: string;
+  STEPDEFPATH: string[];
 };
 
 export type IWriteToDirectory = {
