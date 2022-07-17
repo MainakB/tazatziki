@@ -1,8 +1,7 @@
 {
-  "name": "tzatziki-core",
+  "name": "@kaniamb/tzatziki-core",
   "version": "1.0.23",
-  "private": false,
-  "description": "A test project scaffolding",
+  "description": "A webdriverio test project scaffolding",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
