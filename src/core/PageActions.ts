@@ -137,9 +137,13 @@ export class Action extends ExceptionHandler {
       waitCondition: WAITCONDITIONS.ELEMENTTOBEENABLED,
     });
     try {
+      if (args.clickBeforeTextInput) {
+        await self.click(args);
+      }
       await element.setValue(args.inputText);
       Logger.log("Entered text '" + args.inputText + "' to the element");
     } catch (exception) {
+      args.clickBeforeTextInput = !args.clickBeforeTextInput;
       await super.catchException(
         exception,
         async () => await self.enterText(args)

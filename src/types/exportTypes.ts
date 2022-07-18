@@ -12,6 +12,7 @@ export enum LocatorTypes {
   BUTTONTEXT = "buttonText",
   PARTIALBUTTONTEXT = "partialButtonText",
   TAGNAME = "tagName",
+  NONE = "none",
   // JS = "js",
 }
 

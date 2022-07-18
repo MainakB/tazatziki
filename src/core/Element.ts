@@ -205,6 +205,7 @@ export class Element extends ExceptionHandler {
       let elementObjectList: LocatorObject[] = await self.toLocatorDetails(
         args
       );
+
       let elementObjectLinkedList = new CircularLinkedList();
       for (let elementObject of elementObjectList) {
         elementObjectLinkedList.append(elementObject);

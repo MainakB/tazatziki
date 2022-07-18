@@ -4,6 +4,7 @@ import {
   WAITCONDITIONS,
   LocatorObject,
   ReturnElementType,
+  LocatorTypes,
 } from "../types";
 
 import {
@@ -155,11 +156,12 @@ let findStoredObject = (obj: string): ILocators | null => {
     `${filePath}.findStoredObject : Look up for object post camelcasing in element repos - "${obj}"`
   );
 
-  const found = LocatorsCache.getInstance().cachedLocators.get(obj);
+  const found = LocatorsCache.getInstance().getCachedLocators().get(obj);
   const log = found
     ? `Found Object - ${JSON.stringify(found, null, 4)}`
     : "No entry found in the locators repo";
-  Logger.log(`${filePath}.findStoredObject : ${log}`);
+  Logger.log(`${filePath}.findStoredObject hijibiji: ${log}`);
+
   return found ? { ...found } : null;
 };
 
@@ -228,8 +230,14 @@ export const getStoredObjectsJSFiles = (args: any): LocatorObject[] => {
     }
   } else {
     foundObject = {
-      locator: args.pageObject,
-      description: "using xpath directly as passed",
+      locator: [
+        {
+          locatorType: LocatorTypes.NONE,
+          locatorValue: args.pageObject,
+        },
+      ],
+      description:
+        "Locator value passed is used as-is due to no valid locator type match.",
     };
   }
   return foundObject.locator;

@@ -1,5 +1,6 @@
 // import { apm_m, predix_essentials } from "@apm_modules";
 import * as commonLocators from "./locators-common";
+
 // import * as leftNavLocators from "./locators-left-navigation";
 
 // const commonPoList: any[] = Object.values(commonLocators);
@@ -59,13 +60,13 @@ import * as commonLocators from "./locators-common";
 // };
 // export const initPageObjects = () => {
 //   global.cachedPageLocators = importedPoList();
-//   console.log("test glovbal", global);
 // };
 
 export class LocatorsCache {
   private static _instance: LocatorsCache;
-  cachedLocators: any;
-  commonPoList: any[];
+  private cachedLocators: any;
+  private commonPoList: any[];
+  private fileName = "src.services.LocatorsCache";
 
   private constructor() {
     this.commonPoList = Object.values(commonLocators);
@@ -78,6 +79,11 @@ export class LocatorsCache {
     }
     return LocatorsCache._instance;
   }
+
+  getCachedLocators() {
+    return this.cachedLocators;
+  }
+
   convertMapToObj(map: any) {
     const obj = {} as any;
     for (const [k, v] of map) obj[k] = v;
@@ -110,13 +116,13 @@ export class LocatorsCache {
   }
 
   importedPoList(commonPoList: any[]) {
-    console.time("Duplicate locators check completed in: ");
+    console.time(`${this.fileName} Duplicate locators check completed in: `);
     const cachedLocators = this.reduceLocatorsToObject([
       ...commonPoList,
       // ...leftNavPoList,
       // ...(await getLocatorsFromPromise()).reduce(reduceLocators, []),
     ]);
-    console.timeEnd("Duplicate locators check completed in: ");
+    console.timeEnd(`${this.fileName} Duplicate locators check completed in: `);
     return cachedLocators;
   }
 
