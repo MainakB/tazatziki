@@ -1,6 +1,6 @@
 {
   "name": "@kaniamb/tzatziki-core",
-  "version": "1.0.35",
+  "version": "1.0.36",
   "description": "A webdriverio test project scaffolding",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
