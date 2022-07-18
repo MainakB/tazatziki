@@ -1,8 +1,9 @@
-import { WdioLauncher } from "./WdioLauncher";
-import { RuntimeConfigs } from "./RuntimeConfigs";
-import { multiCapabilities } from "../services";
-import { Utils } from "../lib";
-import { CucumberOptsService } from "./CucumberOptsService";
+import {WdioLauncher} from './WdioLauncher';
+import {RuntimeConfigs} from './RuntimeConfigs';
+import {multiCapabilities} from '../services';
+import {Utils} from '../lib';
+import {CucumberOptsService} from './CucumberOptsService';
+import {LocatorsCache} from '../services/LocatorsCache';
 
 export class TestRunner {
   private static _instance: TestRunner;
@@ -17,7 +18,7 @@ export class TestRunner {
   }
 
   initTestLauncher(testType: string, args?: any): void {
-    if (testType === "wdio") {
+    if (testType === 'wdio') {
       WdioLauncher.getInstance(args);
     }
   }
@@ -27,17 +28,8 @@ export class TestRunner {
     // return new Promise((_resolve, reject) => reject(1));
   }
 
-  async setWdioConfigs(_setargs: {
-    suites: any;
-    customer: string;
-    tagExpression: string;
-    args: any;
-    testType: string;
-  }) {
-    const testSpecs = await Utils.getInstance().resolveTestSuite(
-      _setargs.suites,
-      _setargs.customer
-    );
+  async setWdioConfigs(_setargs: {suites: any; customer: string; tagExpression: string; args: any; testType: string}) {
+    const testSpecs = await Utils.getInstance().resolveTestSuite(_setargs.suites, _setargs.customer);
     await multiCapabilities();
 
     _setargs.args._args = {
@@ -56,16 +48,12 @@ export class TestRunner {
     this.initTestLauncher(_setargs.testType, _setargs.args);
   }
 
-  async initConfigs(_initargs: {
-    gruntobj: any;
-    args?: { _args: object; __configFilePath?: string };
-    testType?: string;
-  }) {
-    const browser = _initargs.gruntobj.option("browser");
-    const suites = _initargs.gruntobj.option("suites");
-    const customer = _initargs.gruntobj.option("customer");
-    const tagExpression = _initargs.gruntobj.option("tags");
-    const testType = _initargs.testType || "wdio";
+  async initConfigs(_initargs: {gruntobj: any; args?: {_args: object; __configFilePath?: string}; testType?: string}) {
+    const browser = _initargs.gruntobj.option('browser');
+    const suites = _initargs.gruntobj.option('suites');
+    const customer = _initargs.gruntobj.option('customer');
+    const tagExpression = _initargs.gruntobj.option('tags');
+    const testType = _initargs.testType || 'wdio';
 
     if (!_initargs.args) {
       _initargs.args = {
@@ -73,10 +61,9 @@ export class TestRunner {
       };
     }
 
-    if (
-      (Array.isArray(browser) && browser) ||
-      (!Array.isArray(browser) && browser)
-    ) {
+    await LocatorsCache.getInstance().getProjectLocators();
+
+    if ((Array.isArray(browser) && browser) || (!Array.isArray(browser) && browser)) {
       RuntimeConfigs.getInstance().setBrowser(browser);
     }
     // const testSpecs = await Utils.getInstance().resolveTestSuite(
@@ -94,7 +81,7 @@ export class TestRunner {
     //     ...CucumberOptsService.getInstance({ tagExpression }),
     //   },
     // };
-    if (testType === "wdio") {
+    if (testType === 'wdio') {
       this.setWdioConfigs({
         suites,
         customer,

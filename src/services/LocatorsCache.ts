@@ -62,22 +62,19 @@
 //   console.log("test glovbal", global);
 // };
 
+import {Utils} from '../lib/Utils';
+// Utils.traverseForLocatorsFiles
 export class LocatorsCache {
   private static _instance: LocatorsCache;
   private cachedLocators: any;
   private commonPoList: any[] = [];
-  private fileName = "src.services.LocatorsCache";
+  private fileName = 'src.services.LocatorsCache';
 
-  private constructor(locators?: any) {
-    if (locators) {
-      this.commonPoList = Object.values(locators);
-      this.cachedLocators = this.initPageObjects(this.commonPoList);
-    }
-  }
+  private constructor() {}
 
-  static getInstance(locators?: any) {
+  static getInstance() {
     if (!LocatorsCache._instance) {
-      LocatorsCache._instance = new LocatorsCache(locators);
+      LocatorsCache._instance = new LocatorsCache();
     }
     return LocatorsCache._instance;
   }
@@ -86,45 +83,29 @@ export class LocatorsCache {
     return this.cachedLocators;
   }
 
-  setCachedLocators(locators: any) {
-    // this.commonPoList = Object.values(locators);
-
-    this.cachedLocators = locators;
-    // this.initPageObjects(this.commonPoList);
+  computeAndAppendCachedLocators(locators: any) {
+    this.commonPoList = Object.values(locators);
+    this.cachedLocators = this.initPageObjects(this.commonPoList);
   }
 
-  convertMapToObj(map: any) {
+  setCachedLocators(locators: any) {
+    this.cachedLocators = locators;
+  }
+
+  async getProjectLocators() {
+    const utils = Utils.getInstance();
+    const locatorFiles = Array.from(utils.traverseForLocatorsFiles());
+    const locators = this.initPageObjects(Object.values(Array.from(await utils.importList(locatorFiles))[0]));
+    this.setCachedLocators(locators);
+  }
+
+  protected convertMapToObj(map: any) {
     const obj = {} as any;
     for (const [k, v] of map) obj[k] = v;
     return obj;
   }
 
-  // reduceLocatorsToObject(sources: any) {
-  //   const originalProperties = new Map();
-  //   const duplicateLocators = new Map();
-  //   for (const src of sources) {
-  //     for (const prop of Object.keys(src)) {
-  //       if (originalProperties.has(prop)) {
-  //         duplicateLocators.set(
-  //           prop,
-  //           `${JSON.stringify(src[prop])}. Name "${prop}" already exists in ${
-  //             originalProperties.get(prop).poParentObject
-  //           }`
-  //         );
-  //       } else {
-  //         originalProperties.set(prop, src[prop]);
-  //       }
-  //     }
-  //   }
-  //   if (duplicateLocators.size) {
-  //     throw new Error(
-  //       `${JSON.stringify(this.convertMapToObj(duplicateLocators))}`
-  //     );
-  //   }
-  //   return originalProperties;
-  // }
-
-  reduceLocatorsToObject(sources: any) {
+  protected reduceLocatorsToObject(sources: any) {
     let originalProperties: any = {};
     let duplicateLocators: any = {};
     for (const src of sources) {
@@ -132,9 +113,7 @@ export class LocatorsCache {
         if (originalProperties[prop] !== undefined) {
           duplicateLocators = {
             ...duplicateLocators,
-            [prop]: `${JSON.stringify(
-              src[prop]
-            )}. Name "${prop}" already exists in ${
+            [prop]: `${JSON.stringify(src[prop], null, 4)}. Name "${prop}" already exists in ${
               originalProperties[prop].poParentObject
             }`,
           };
@@ -146,26 +125,23 @@ export class LocatorsCache {
         }
       }
     }
-    if (duplicateLocators.size) {
-      throw new Error(
-        `${JSON.stringify(this.convertMapToObj(duplicateLocators))}`
-      );
+    if (Object.values(duplicateLocators).length) {
+      throw new Error(`${this.fileName} Duplicate Locators Error: \n${JSON.stringify(duplicateLocators)}`);
     }
     return originalProperties;
   }
 
-  importedPoList(commonPoList: any[]) {
+  protected importedPoList(commonPoList: any[]) {
     console.time(`${this.fileName} Duplicate locators check completed in: `);
     const cachedLocators = this.reduceLocatorsToObject([
       ...commonPoList,
-      // ...leftNavPoList,
-      // ...(await getLocatorsFromPromise()).reduce(reduceLocators, []),
+      ...(this.cachedLocators ? [this.cachedLocators] : []),
     ]);
     console.timeEnd(`${this.fileName} Duplicate locators check completed in: `);
     return cachedLocators;
   }
 
-  initPageObjects(commonPoList: any[]) {
+  protected initPageObjects(commonPoList: any[]) {
     const locatorsList = this.importedPoList(commonPoList);
     return locatorsList;
   }

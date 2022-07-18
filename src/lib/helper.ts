@@ -1,21 +1,11 @@
-import { getValue } from "@wdio/shared-store-service";
-import {
-  ElementFinder,
-  Types,
-  LocatorObject,
-  ReturnElementType,
-} from "../types";
+import {getValue} from '@wdio/shared-store-service';
+import {ElementFinder, Types, LocatorObject, ReturnElementType} from '../types';
 
-import {
-  LocatorsCache,
-  CucumberLoggerService,
-  StepDurationCalculator,
-  Logger,
-} from "../services";
-import { Utils } from "./Utils";
+import {LocatorsCache, CucumberLoggerService, StepDurationCalculator, Logger} from '../services';
+import {Utils} from './Utils';
 
 const filePath = `src.lib.helper`;
-const { convertToCamelcase, distance } = Utils.getInstance();
+const {convertToCamelcase, distance} = Utils.getInstance();
 /**
  * Verifies attribute's value contains expected text
  * @method verifyAttrContains
@@ -130,18 +120,10 @@ const { convertToCamelcase, distance } = Utils.getInstance();
 //   return true;
 // }
 
-const isStringArray = (arr: string[] | ElementFinder[]) =>
-  arr.every((value) => typeof value === "string");
+const isStringArray = (arr: string[] | ElementFinder[]) => arr.every(value => typeof value === 'string');
 
-export function isElementFinder(
-  arg: string | string[] | ElementFinder | ElementFinder[]
-): boolean {
-  if (
-    !arg ||
-    typeof arg === "string" ||
-    (Array.isArray(arg) && isStringArray(arg))
-  )
-    return false;
+export function isElementFinder(arg: string | string[] | ElementFinder | ElementFinder[]): boolean {
+  if (!arg || typeof arg === 'string' || (Array.isArray(arg) && isStringArray(arg))) return false;
   return true;
 }
 
@@ -151,29 +133,20 @@ export function isElementFinder(
  *  @returns:  return the stored page object
  ************************************************************************************************ */
 let findStoredObject = async (obj: string): Promise<Types.ILocators | null> => {
-  Logger.log(
-    `${filePath}.findStoredObject : Look up for object post camelcasing in element repos - "${obj}"`
-  );
+  Logger.log(`${filePath}.findStoredObject : Look up for object post camelcasing in element repos - "${obj}"`);
 
   let locatorCacheInstance = LocatorsCache.getInstance();
-  if (
-    !locatorCacheInstance.getCachedLocators() ||
-    !locatorCacheInstance.getCachedLocators().size
-  ) {
-    let parsedLocators = JSON.parse(
-      (await getValue("locatorsCache")) as string
-    );
+  if (!locatorCacheInstance.getCachedLocators() || !locatorCacheInstance.getCachedLocators().size) {
+    let parsedLocators = JSON.parse((await getValue('locatorsCache')) as string);
 
     locatorCacheInstance.setCachedLocators(parsedLocators);
   }
 
   const found = LocatorsCache.getInstance().getCachedLocators()[obj];
-  const log = found
-    ? `Found Object - ${JSON.stringify(found, null, 4)}`
-    : "No entry found in the locators repo";
+  const log = found ? `Found Object - ${JSON.stringify(found, null, 4)}` : 'No entry found in the locators repo';
   Logger.log(`${filePath}.findStoredObject hijibiji: ${log}`);
 
-  return found ? { ...found } : null;
+  return found ? {...found} : null;
 };
 
 /** **********************************************************************************************
@@ -183,35 +156,25 @@ export const replaceTextsInLocators = (
   locatorString: string,
   replaceText: (string | number)[] | string | number | object
 ) => {
-  Logger.log(
-    `${filePath}.replaceTextsInLocators : Replace text in locator - ${locatorString} with - ${replaceText}`
-  );
+  Logger.log(`${filePath}.replaceTextsInLocators : Replace text in locator - ${locatorString} with - ${replaceText}`);
   let locatorModified = locatorString;
-  if (typeof replaceText === "string" || typeof replaceText === "number") {
+  if (typeof replaceText === 'string' || typeof replaceText === 'number') {
     Logger.log(
       `${filePath}.replaceTextsInLocators : Replace text in locator fir replace text type - ${typeof replaceText}`
     );
-    locatorModified = locatorString.replace("replaceText", String(replaceText));
-  } else if (typeof replaceText === "object" && !Array.isArray(replaceText)) {
-    Logger.log(
-      `${filePath}.replaceTextsInLocators : Replace text in locator fir replace text type - Object`
-    );
+    locatorModified = locatorString.replace('replaceText', String(replaceText));
+  } else if (typeof replaceText === 'object' && !Array.isArray(replaceText)) {
+    Logger.log(`${filePath}.replaceTextsInLocators : Replace text in locator fir replace text type - Object`);
     Object.keys(replaceText).forEach((key: string) => {
       locatorModified = locatorModified.replace(key, (replaceText as any)[key]);
     });
   } else if (Array.isArray(replaceText)) {
-    Logger.log(
-      `${filePath}.replaceTextsInLocators : Replace text in locator fir replace text type - Array`
-    );
+    Logger.log(`${filePath}.replaceTextsInLocators : Replace text in locator fir replace text type - Array`);
     for (let i = 0; i < replaceText.length; i++) {
-      locatorModified = locatorModified.replace("replaceText", () =>
-        String(replaceText[i])
-      );
+      locatorModified = locatorModified.replace('replaceText', () => String(replaceText[i]));
     }
   }
-  Logger.log(
-    `${filePath}.replaceTextsInLocators : Replaced text. Modified locator - ${locatorModified}`
-  );
+  Logger.log(`${filePath}.replaceTextsInLocators : Replaced text. Modified locator - ${locatorModified}`);
   return locatorModified;
 };
 
@@ -220,25 +183,18 @@ export const replaceTextsInLocators = (
  *  @params : {pageObj} value passed
  *  @returns:  return the stored page object
  *********************************************************************************************** */
-export const getStoredObjectsJSFiles = async (
-  args: any
-): Promise<LocatorObject[]> => {
+export const getStoredObjectsJSFiles = async (args: any): Promise<LocatorObject[]> => {
   Logger.log(
     `${filePath}.getStoredObjectsJSFiles : Passed object before resolving duplication, if any - "${args.pageObject}"`
   );
-  Logger.log(
-    `${filePath}.getStoredObjectsJSFiles : Passed object before camelcasing - "${args.pageObject}"`
-  );
+  Logger.log(`${filePath}.getStoredObjectsJSFiles : Passed object before camelcasing - "${args.pageObject}"`);
   const obj = convertToCamelcase(args.pageObject as string);
   let foundObject: Types.ILocators | null = await findStoredObject(obj);
 
   if (foundObject && foundObject.locator && foundObject.locator.length) {
     for (let locatorObj of foundObject.locator) {
       if (args.replaceText) {
-        locatorObj.locatorValue = replaceTextsInLocators(
-          locatorObj.locatorValue as string,
-          args.replaceText
-        );
+        locatorObj.locatorValue = replaceTextsInLocators(locatorObj.locatorValue as string, args.replaceText);
       }
     }
   } else {
@@ -249,17 +205,15 @@ export const getStoredObjectsJSFiles = async (
           locatorValue: args.pageObject,
         },
       ],
-      description:
-        "Locator value passed is used as-is due to no valid locator type match.",
+      poParentObject: Types.LocatorTypes.NONE,
+      description: 'Locator value passed is used as-is due to no valid locator type match.',
     };
   }
   return foundObject.locator;
 };
 
 export const shouldAutoScroll = (waitCondition: Types.WAITCONDITIONS) => {
-  Logger.log(
-    `${filePath}.shouldAutoScroll : Check if auto scroll when wait condition is ${waitCondition}`
-  );
+  Logger.log(`${filePath}.shouldAutoScroll : Check if auto scroll when wait condition is ${waitCondition}`);
   const waitConditionsToScroll = [
     Types.WAITCONDITIONS.PRESENCEOF,
     Types.WAITCONDITIONS.ELEMENTTOBECLICKABLE,
@@ -269,21 +223,14 @@ export const shouldAutoScroll = (waitCondition: Types.WAITCONDITIONS) => {
     Types.WAITCONDITIONS.VISIBILITYOF,
     Types.WAITCONDITIONS.ELEMENTTOBEENABLED,
   ];
-  const shouldAutoScrollToObj =
-    waitConditionsToScroll.includes(waitCondition) || false;
-  Logger.log(
-    `${filePath}.shouldAutoScroll : Should auto scroll result - ${shouldAutoScrollToObj}`
-  );
+  const shouldAutoScrollToObj = waitConditionsToScroll.includes(waitCondition) || false;
+  Logger.log(`${filePath}.shouldAutoScroll : Should auto scroll result - ${shouldAutoScrollToObj}`);
   return shouldAutoScrollToObj;
 };
 
-export const halvedWaitConditionTime = (time: number) =>
-  time ? time / 2 : time;
+export const halvedWaitConditionTime = (time: number) => (time ? time / 2 : time);
 
-export const logMultiLocatorTries = (
-  elementMetadata: ReturnElementType,
-  logName: string
-) => {
+export const logMultiLocatorTries = (elementMetadata: ReturnElementType, logName: string) => {
   const workingLocator = JSON.stringify(
     {
       locatorName: elementMetadata.name,
@@ -303,10 +250,7 @@ export const logMultiLocatorTries = (
   Logger.log(`${filePath}.logMultiLocatorTries : ${logMessage}`);
 };
 
-export const logLocatorsOnTimeout = (
-  elementMetadata: ReturnElementType,
-  logName: string
-) => {
+export const logLocatorsOnTimeout = (elementMetadata: ReturnElementType, logName: string) => {
   const logMessage = `${logName} Step timeout. \nFailed locator details : ${JSON.stringify(
     Object.values(elementMetadata.err),
     null,
@@ -317,12 +261,8 @@ export const logLocatorsOnTimeout = (
 };
 
 export const setTimedOutStatus = () => {
-  const configStepTimeOut: number = (browser.config as WebdriverIO.Config)[
-    "cucumberOpts"
-  ]!["timeout"] as number;
-  const startTime = StepDurationCalculator.getInstance()
-    .getDateTime()
-    .getTime();
+  const configStepTimeOut: number = (browser.config as WebdriverIO.Config)['cucumberOpts']!['timeout'] as number;
+  const startTime = StepDurationCalculator.getInstance().getDateTime().getTime();
 
   const maxWaitTimeInstance = StepDurationCalculator.getInstance();
   maxWaitTimeInstance.setActionDateTime();
@@ -340,7 +280,7 @@ export const setTimedOutStatus = () => {
   if (actionDistance <= 0 || stepDistance <= 10000) {
     Logger.log(
       `${filePath}.setTimedOutStatus : Stopping step as the time distances are to expire ${JSON.stringify(
-        { actionDistance, stepDistance },
+        {actionDistance, stepDistance},
         null,
         4
       )}`

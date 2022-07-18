@@ -1,15 +1,15 @@
-import cucumberJson from "wdio-cucumberjs-json-reporter";
-import * as fs from "fs";
-import * as path from "path";
-import { setValue, getValue } from "@wdio/shared-store-service";
+import cucumberJson from 'wdio-cucumberjs-json-reporter';
+import * as fs from 'fs';
+import * as path from 'path';
+import {setValue} from '@wdio/shared-store-service';
 
-import { LocatorsCache } from "../services/LocatorsCache";
-import { StepDurationCalculator } from "../services/StepDurationCalculator";
-import { CdnFileMerger } from "../services/CdnFileMerger";
-import { CucumberLoggerService } from "./CucumberLoggerService";
-import { RuntimeConfigs } from "../services/RuntimeConfigs";
+import {LocatorsCache} from '../services/LocatorsCache';
+import {StepDurationCalculator} from '../services/StepDurationCalculator';
+import {CdnFileMerger} from '../services/CdnFileMerger';
+import {CucumberLoggerService} from './CucumberLoggerService';
+import {RuntimeConfigs} from '../services/RuntimeConfigs';
 
-const { generate } = require("multiple-cucumber-html-reporter");
+const {generate} = require('multiple-cucumber-html-reporter');
 
 const dir: string = `${process.cwd()}/Reports`;
 
@@ -30,12 +30,7 @@ export const hooks = {
    * @param {Array.<String>} specs List of spec file paths that are to be run
    * @param {String} cid worker id (e.g. 0-0)
    */
-  beforeSession: function (
-    _config: any,
-    _capabilities: any,
-    _specs: any,
-    _cid: any
-  ) {
+  beforeSession: function (_config: any, _capabilities: any, _specs: any, _cid: any) {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
@@ -54,16 +49,11 @@ export const hooks = {
    * @param {number}             result.duration  duration of scenario in milliseconds
    * @param {Object}             context          Cucumber World object
    */
-  afterStep: async function (
-    _step: any,
-    _scenario: any,
-    result: any,
-    _context: Object
-  ) {
+  afterStep: async function (_step: any, _scenario: any, result: any, _context: Object) {
     const cucumberLoggerInstance = CucumberLoggerService.getInstance();
     if (!result.passed) {
       const stream: string = await browser.takeScreenshot();
-      await cucumberJson.attach(stream, "image/png");
+      await cucumberJson.attach(stream, 'image/png');
     }
 
     if (cucumberLoggerInstance.getMessage() !== null) {
@@ -79,18 +69,7 @@ export const hooks = {
    */
   onPrepare: [
     async function (_config: WebdriverIO.Config, _capabilities: any) {
-      console.log(
-        "Bekfore shared service ",
-        LocatorsCache.getInstance().getCachedLocators(),
-        JSON.stringify(LocatorsCache.getInstance().getCachedLocators())
-      );
-
-      await setValue(
-        "locatorsCache",
-        JSON.stringify(LocatorsCache.getInstance().getCachedLocators())
-      );
-
-      console.log("SAfter set", await getValue("locatorsCache"));
+      await setValue('locatorsCache', JSON.stringify(LocatorsCache.getInstance().getCachedLocators()));
     },
   ],
 
@@ -214,41 +193,33 @@ export const hooks = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {<Object>} results object containing test results
    */
-  onComplete: function (
-    _exitCode: any,
-    _config: any,
-    _capabilities: any,
-    _results: any
-  ) {
+  onComplete: function (_exitCode: any, _config: any, _capabilities: any, _results: any) {
     // Generate the report when it all tests are done
     generate({
       // Required
       // This part needs to be the same path where you store the JSON files
       // default = '.tmp/json/'
-      jsonDir: "Reports/json-output-folder/",
-      reportPath: "Reports/report/",
+      jsonDir: 'Reports/json-output-folder/',
+      reportPath: 'Reports/report/',
       saveCollectedJSON: true,
       displayDuration: true,
       // for more options see https://github.com/wswebcreation/multiple-cucumber-html-reporter#options
       customData: {
-        title: "Service info",
+        title: 'Service info',
         data: [
-          { label: "Project", value: "Custom project" },
-          { label: "Release", value: "1.2.3" },
-          { label: "Cycle", value: "B11221.34321" },
+          {label: 'Project', value: 'Custom project'},
+          {label: 'Release', value: '1.2.3'},
+          {label: 'Cycle', value: 'B11221.34321'},
           {
-            label: "Execution Start Time",
-            value: "Nov 19th 2017, 02:31 PM EST",
+            label: 'Execution Start Time',
+            value: 'Nov 19th 2017, 02:31 PM EST',
           },
-          { label: "Execution End Time", value: "Nov 19th 2017, 02:56 PM EST" },
+          {label: 'Execution End Time', value: 'Nov 19th 2017, 02:56 PM EST'},
         ],
       },
     });
-    const oldPath = path.resolve(
-      process.cwd(),
-      "Reports/report/merged-output.json"
-    );
-    const newPath = path.resolve(process.cwd(), "Reports/results.json");
+    const oldPath = path.resolve(process.cwd(), 'Reports/report/merged-output.json');
+    const newPath = path.resolve(process.cwd(), 'Reports/results.json');
     fs.renameSync(oldPath, newPath);
     CdnFileMerger();
   },
