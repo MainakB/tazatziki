@@ -34,6 +34,8 @@
     "winston": "^3.8.1"
   },
   "devDependencies": {
+    "commitlint-config-cz": "^0.13.3",
+    "cz-customizable": "^6.9.1",
     "eslint": "^8.20.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
