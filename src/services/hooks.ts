@@ -1,7 +1,9 @@
 import cucumberJson from "wdio-cucumberjs-json-reporter";
 import * as fs from "fs";
 import * as path from "path";
-// import { LocatorsCache } from "../services/LocatorsCache";
+import { setValue } from "@wdio/shared-store-service";
+
+import { LocatorsCache } from "../services/LocatorsCache";
 import { StepDurationCalculator } from "../services/StepDurationCalculator";
 import { CdnFileMerger } from "../services/CdnFileMerger";
 import { CucumberLoggerService } from "./CucumberLoggerService";
@@ -75,9 +77,16 @@ export const hooks = {
    * @param {Object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  // onPrepare: function (_config: any, _capabilities: any) {
-  //   LocatorsCache.getInstance();
-  // },
+  onPrepare: [
+    async function (_config: WebdriverIO.Config, _capabilities: any) {
+      await setValue(
+        "locatorsCache",
+        JSON.stringify(LocatorsCache.getInstance())
+      );
+    },
+  ],
+
+  // LocatorsCache.getInstance();
 
   /**
    * Gets executed before a worker process is spawned and can be used to initialise specific service

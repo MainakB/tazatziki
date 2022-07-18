@@ -1,4 +1,3 @@
-// import { ChainablePromiseElement } from 'webdriverio';
 import { ExceptionHandler } from "./ExceptionHandler";
 import {
   IAutoScroll,
@@ -45,7 +44,9 @@ export class Element extends ExceptionHandler {
   }
 
   private async toLocatorDetails(args: IFindElement): Promise<LocatorObject[]> {
-    let locatorObjectRetrieved: LocatorObject[] = getStoredObjectsJSFiles(args);
+    let locatorObjectRetrieved: LocatorObject[] = await getStoredObjectsJSFiles(
+      args
+    );
     if (!locatorObjectRetrieved) {
       throw new Error("Please provide valid element details");
     }

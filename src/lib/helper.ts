@@ -1,10 +1,9 @@
+import { getValue } from "@wdio/shared-store-service";
 import {
   ElementFinder,
   Types,
-  // WAITCONDITIONS,
   LocatorObject,
   ReturnElementType,
-  // LocatorTypes,
 } from "../types";
 
 import {
@@ -151,12 +150,27 @@ export function isElementFinder(
  *  @params : {pageObj} value passed
  *  @returns:  return the stored page object
  ************************************************************************************************ */
-let findStoredObject = (obj: string): Types.ILocators | null => {
+let findStoredObject = async (obj: string): Promise<Types.ILocators | null> => {
   Logger.log(
     `${filePath}.findStoredObject : Look up for object post camelcasing in element repos - "${obj}"`
   );
 
+  let locatorCache = LocatorsCache.getInstance().getCachedLocators();
+  if (!locatorCache.size) {
+    console.log("Locators cache empty");
+    locatorCache = JSON.parse((await getValue("locatorsCache")) as string);
+    console.log(
+      "JSON.parse",
+      JSON.parse((await getValue("locatorsCache")) as string)
+    );
+  }
+  console.log("Locators cache not empty");
   const found = LocatorsCache.getInstance().getCachedLocators().get(obj);
+  // JSON.parse((await getValue("locatorsCache")) as string).get(
+  //   obj
+  // );
+  console.log("1111found", found);
+  // LocatorsCache.getInstance().getCachedLocators().get(obj);
   const log = found
     ? `Found Object - ${JSON.stringify(found, null, 4)}`
     : "No entry found in the locators repo";
@@ -209,7 +223,9 @@ export const replaceTextsInLocators = (
  *  @params : {pageObj} value passed
  *  @returns:  return the stored page object
  *********************************************************************************************** */
-export const getStoredObjectsJSFiles = (args: any): LocatorObject[] => {
+export const getStoredObjectsJSFiles = async (
+  args: any
+): Promise<LocatorObject[]> => {
   Logger.log(
     `${filePath}.getStoredObjectsJSFiles : Passed object before resolving duplication, if any - "${args.pageObject}"`
   );
@@ -217,7 +233,7 @@ export const getStoredObjectsJSFiles = (args: any): LocatorObject[] => {
     `${filePath}.getStoredObjectsJSFiles : Passed object before camelcasing - "${args.pageObject}"`
   );
   const obj = convertToCamelcase(args.pageObject as string);
-  let foundObject: Types.ILocators | null = findStoredObject(obj);
+  let foundObject: Types.ILocators | null = await findStoredObject(obj);
 
   if (foundObject && foundObject.locator && foundObject.locator.length) {
     for (let locatorObj of foundObject.locator) {

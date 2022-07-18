@@ -6,7 +6,12 @@
 // export { Logger, Launcher };
 
 import { Action, Element } from "./core";
-import { Logger, TestRunner, RuntimeConfigs } from "./services";
+import {
+  Logger,
+  TestRunner,
+  RuntimeConfigs,
+  LocatorsCache as LocatorCachingService,
+} from "./services";
 import { Utils } from "./lib";
 import { Types } from "./types";
 
@@ -46,5 +51,5 @@ class Utility {
   }
 }
 const Tzatziki = new Utility();
-export { Tzatziki, RuntimeConfigs, Types };
+export { Tzatziki, RuntimeConfigs, Types, LocatorCachingService };
 // export { Types } from "./types";

@@ -1,5 +1,6 @@
 // import { apm_m, predix_essentials } from "@apm_modules";
-// import * as commonLocators from "./locators-common";
+// import * as commonLocators from `../../../../tzatziki-bl/dist/src/services`;
+
 // import * as leftNavLocators from "./locators-left-navigation";
 
 // const commonPoList: any[] = Object.values(commonLocators);
@@ -59,20 +60,21 @@
 // };
 // export const initPageObjects = () => {
 //   global.cachedPageLocators = importedPoList();
-//   console.log("test glovbal", global);
 // };
 
 export class LocatorsCache {
   private static _instance: LocatorsCache;
   private cachedLocators: any;
-  private commonPoList: any[] = [];
+  private commonLocators: any = [];
+  private commonPoList: any[];
   private fileName = "src.services.LocatorsCache";
 
-  private constructor(locators?: any) {
-    if (locators) {
-      this.commonPoList = Object.values(locators);
-      this.cachedLocators = this.initPageObjects(this.commonPoList);
-    }
+  private constructor(commonLocators: any) {
+    console.log("commonLocatorscommonLocators", commonLocators);
+    this.commonPoList = commonLocators
+      ? Object.values(commonLocators)
+      : Object.values(this.commonLocators);
+    this.cachedLocators = this.initPageObjects(this.commonPoList);
   }
 
   static getInstance(commonLocators?: any) {
