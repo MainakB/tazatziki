@@ -1,8 +1,9 @@
-"use strict";
-import { ExceptionHandler } from "./ExceptionHandler";
-import { IClick, IEnterText, Types } from "../types";
-import { Element } from "./Element";
+
+import {ExceptionHandler} from './ExceptionHandler';
+import {IClick, IEnterText, Types} from '../types';
+import {Element} from './Element';
 // import { Assertion } from "./Assertions";
+import {Logger} from '../services';
 
 export class Action extends ExceptionHandler {
   Element: Element;
@@ -131,8 +132,8 @@ export class Action extends ExceptionHandler {
    * @throws {Please Provide Element Details} when elementDetails param is null or undefined
    */
   async enterText(args: IEnterText): Promise<void> {
-    let self: this = this;
-    let element: WebdriverIO.Element = await self.Element.findElement({
+    const self: this = this;
+    const element: WebdriverIO.Element = await self.Element.findElement({
       ...args,
       waitCondition: Types.WAITCONDITIONS.ELEMENTTOBEENABLED,
     });
@@ -144,10 +145,7 @@ export class Action extends ExceptionHandler {
       Logger.log("Entered text '" + args.inputText + "' to the element");
     } catch (exception) {
       args.clickBeforeTextInput = !args.clickBeforeTextInput;
-      await super.catchException(
-        exception,
-        async () => await self.enterText(args)
-      );
+      await super.catchException(exception, async () => self.enterText(args));
     }
   }
 
@@ -161,13 +159,13 @@ export class Action extends ExceptionHandler {
    * @throws {Please Provide Element Details} when elementDetails param is null or undefined
    */
   async open(path: string): Promise<void> {
-    let self: this = this;
+    const self: this = this;
 
     try {
       await browser.url(path);
-      Logger.log("Element is clicked");
+      Logger.log('Element is clicked');
     } catch (ex) {
-      await super.catchException(ex, async () => await self.open(path));
+      await super.catchException(ex, async () => self.open(path));
     }
   }
 
@@ -181,17 +179,17 @@ export class Action extends ExceptionHandler {
    * @throws {Please Provide Element Details} when elementDetails param is null or undefined
    */
   async click(args: IClick): Promise<void> {
-    let self: this = this;
-    let element: WebdriverIO.Element = await self.Element.findElement({
+    const self: this = this;
+    const element: WebdriverIO.Element = await self.Element.findElement({
       ...args,
       waitCondition: Types.WAITCONDITIONS.ELEMENTTOBECLICKABLE,
     });
 
     try {
       await element.click();
-      Logger.log("Element is clicked");
+      Logger.log('Element is clicked');
     } catch (ex) {
-      await super.catchException(ex, async () => await self.click(args));
+      await super.catchException(ex, async () => self.click(args));
     }
   }
 

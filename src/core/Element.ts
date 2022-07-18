@@ -1,4 +1,4 @@
-import { ExceptionHandler } from "./ExceptionHandler";
+import {ExceptionHandler} from './ExceptionHandler';
 import {
   IAutoScroll,
   LocatorObject,
@@ -6,7 +6,7 @@ import {
   IGetElementExpectedCondition,
   Types,
   ReturnElementType,
-} from "../types";
+} from '../types';
 import {
   getStoredObjectsJSFiles,
   shouldAutoScroll,
@@ -16,23 +16,25 @@ import {
   logMultiLocatorTries,
   setTimedOutStatus,
   Utils,
-} from "../lib";
+} from '../lib';
 // import { Assertion } from "./Assertions";
 
-import { StepDurationCalculator } from "../services";
+import {StepDurationCalculator, Logger} from '../services';
 
-import { GLOBALFLAGS } from "../constants";
-import { ExplicitWaits } from "./ExplicitWaits";
+import {GLOBALFLAGS} from '../constants';
+import {ExplicitWaits} from './ExplicitWaits';
 
 export class Element extends ExceptionHandler {
   private static _instance: Element;
+
   private fileName: string;
+
   private utils: Utils;
   // Assertion: Assertion;
 
   private constructor() {
     super();
-    this.fileName = "core.Element";
+    this.fileName = 'core.Element';
     this.utils = Utils.getInstance();
   }
 
@@ -44,19 +46,17 @@ export class Element extends ExceptionHandler {
   }
 
   private async toLocatorDetails(args: IFindElement): Promise<LocatorObject[]> {
-    let locatorObjectRetrieved: LocatorObject[] = await getStoredObjectsJSFiles(
-      args
-    );
+    Logger.log(`${this.fileName}.toLocatorDetails : Get stored object details.`);
+    const locatorObjectRetrieved: LocatorObject[] = await getStoredObjectsJSFiles(args);
     if (!locatorObjectRetrieved) {
-      throw new Error("Please provide valid element details");
+      throw new Error('Please provide valid element details');
     }
+    Logger.log(`${this.fileName}.toLocatorDetails : Returning stored object details.`);
     return locatorObjectRetrieved;
   }
 
-  async getElementObject(
-    locatorType: string,
-    locatorValue: string | Function
-  ): Promise<WebdriverIO.Element> {
+  async getElementObject(locatorType: string, locatorValue: string | Function): Promise<WebdriverIO.Element> {
+    Logger.log(`${this.fileName}.getElementObject : Get element object.`);
     switch (locatorType) {
       case Types.LocatorTypes.ID:
         return $(`#${locatorValue}`);
@@ -86,6 +86,7 @@ export class Element extends ExceptionHandler {
   }
 
   async checkState(fn: any, msg: string) {
+    Logger.log(`${this.fileName}.checkState : Check state of an object as per tghe wait condition retrieved.`);
     await setTimedOutStatus();
     const bool = await StepDurationCalculator.getInstance().getStopStep();
     if (bool) {
@@ -94,98 +95,77 @@ export class Element extends ExceptionHandler {
     const waitValue = await fn();
     if (waitValue) {
       return true;
-    } else {
+    } 
       return false;
-    }
+    
   }
 
   /**
    * @description Perform auto scrolls
    */
   async autoScroll(params: IAutoScroll) {
-    let self: this = this;
+    const self: this = this;
     const loggerPrefix = `${self.fileName}.autoScroll :`;
     Logger.log(`${loggerPrefix} Perform auto scroll`);
 
-    const waitConditionTimeCalculated = (() => {
-      return params.waitCondition === Types.WAITCONDITIONS.PRESENCEOF
+    const waitConditionTimeCalculated = (() => params.waitCondition === Types.WAITCONDITIONS.PRESENCEOF
         ? params.waitConditionTime || GLOBALFLAGS.WAITCONDITIONTIMEOUTACTIONS
-        : (() =>
-            params.waitConditionTime ||
-            ~~(GLOBALFLAGS.WAITCONDITIONTIMEOUTACTIONS / 2))();
-    })();
+        : (() => params.waitConditionTime || ~~(GLOBALFLAGS.WAITCONDITIONTIMEOUTACTIONS / 2))())();
     try {
-      const waitConditionReturnedForScroll =
-        await ExplicitWaits.getWaitConditions({
-          ...params,
-          waitConditionTime: waitConditionTimeCalculated,
-          waitCondition: Types.WAITCONDITIONS.PRESENCEOF,
-        });
+      const waitConditionReturnedForScroll = await ExplicitWaits.getWaitConditions({
+        ...params,
+        waitConditionTime: waitConditionTimeCalculated,
+        waitCondition: Types.WAITCONDITIONS.PRESENCEOF,
+      });
 
-      Logger.log(
-        `${loggerPrefix} Check for presence of element ${waitConditionReturnedForScroll[1]}`
-      );
+      Logger.log(`${loggerPrefix} Check for presence of element ${waitConditionReturnedForScroll[1]}`);
       await browser.waitUntil(
         // waitConditionReturnedForScroll[0],
-        async () =>
-          await self.checkState(
+        async () => {
+          const returnedState = await self.checkState(
             waitConditionReturnedForScroll[0],
             waitConditionReturnedForScroll[2]
-          ),
+          );
+          return returnedState;
+        },
         {
           timeout: waitConditionReturnedForScroll[1],
           timeoutMsg: waitConditionReturnedForScroll[2],
         }
       );
 
-      if (params.autoScrollType === "center") {
+      if (params.autoScrollType === 'center') {
         Logger.log(`${loggerPrefix} Scroll type is Center scroll.`);
-        await browser.execute(
-          'arguments[0].scrollIntoView({block: "center", inline: "nearest"})',
-          params.element
-        );
+        await browser.execute('arguments[0].scrollIntoView({block: "center", inline: "nearest"})', params.element);
       } else {
         Logger.log(`${loggerPrefix} Scroll type is Bottom scroll.`);
-        await browser.execute(
-          "arguments[0].scrollIntoView(false)",
-          params.element
-        );
+        await browser.execute('arguments[0].scrollIntoView(false)', params.element);
       }
 
       Logger.log(`${loggerPrefix} Scrolled to element of current context`);
       return true;
     } catch (ex) {
-      Logger.log(
-        `${loggerPrefix} Auto Scroll failed because of - ${(<Error>ex).message}`
-      );
-      return super.catchException(
-        ex,
-        async () =>
-          await self.autoScroll({
-            ...params,
-            waitConditionTime: halvedWaitConditionTime(
-              waitConditionTimeCalculated
-            ),
-          })
+      Logger.log(`${loggerPrefix} Auto Scroll failed because of - ${(<Error>ex).message}`);
+      return super.catchException(ex, async () =>
+        self.autoScroll({
+          ...params,
+          waitConditionTime: halvedWaitConditionTime(waitConditionTimeCalculated),
+        })
       );
     }
   }
 
   async findElement(args: IFindElement): Promise<WebdriverIO.Element> {
-    let self: this = this;
-    const configStepTimeOut: number = (browser.config as WebdriverIO.Config)
-      .cucumberOpts?.timeout!;
+    const self: this = this;
+    const configStepTimeOut: number = (browser.config as WebdriverIO.Config).cucumberOpts?.timeout!;
     args = {
       ...args,
       waitConditionTime:
-        (args.waitConditionTime && args.waitConditionTime < configStepTimeOut
-          ? args.waitConditionTime
-          : null) || GLOBALFLAGS.WAITCONDITIONTIMEOUTACTIONS,
+        (args.waitConditionTime && args.waitConditionTime < configStepTimeOut ? args.waitConditionTime : null) ||
+        GLOBALFLAGS.WAITCONDITIONTIMEOUTACTIONS,
     };
 
-    await StepDurationCalculator.getInstance().setActionWaitConditionTime(
-      args.waitConditionTime || 0
-    );
+    await StepDurationCalculator.getInstance().setActionWaitConditionTime(args.waitConditionTime || 0);
 
     let returnedElem;
     try {
@@ -202,12 +182,10 @@ export class Element extends ExceptionHandler {
         return args.pageObject;
       }
 
-      let elementObjectList: LocatorObject[] = await self.toLocatorDetails(
-        args
-      );
+      const elementObjectList: LocatorObject[] = await self.toLocatorDetails(args);
 
-      let elementObjectLinkedList = new CircularLinkedList();
-      for (let elementObject of elementObjectList) {
+      const elementObjectLinkedList = new CircularLinkedList();
+      for (const elementObject of elementObjectList) {
         elementObjectLinkedList.append(elementObject);
       }
       let current = elementObjectLinkedList.getHead();
@@ -215,13 +193,10 @@ export class Element extends ExceptionHandler {
       self.enteredDateTime = new Date();
 
       while (current.next) {
-        let locatorType: string = current.element.locatorType;
-        let locatorValue: string | Function = current.element.locatorValue;
+        const {locatorType} = current.element;
+        const {locatorValue} = current.element;
 
-        const locatorToCheck: WebdriverIO.Element = await self.getElementObject(
-          locatorType,
-          locatorValue
-        );
+        const locatorToCheck: WebdriverIO.Element = await self.getElementObject(locatorType, locatorValue);
 
         returnedElem = await self.getElementByExpectedCondition({
           element: locatorToCheck,
@@ -229,7 +204,7 @@ export class Element extends ExceptionHandler {
           // waitConditionTime: args.waitConditionTime,
           waitConditionTime: 3000,
           waitCondition: args.waitCondition,
-          oElementText: "oElementText",
+          oElementText: 'oElementText',
         });
 
         if (returnedElem.element) {
@@ -242,17 +217,17 @@ export class Element extends ExceptionHandler {
           };
           break;
         } else {
-          (returnElement.element = returnedElem.element),
-            (returnElement.err = {
-              ...returnElement.err,
-              [this.utils.crypt(locatorValue as string, locatorType)]: {
-                locatorValue,
-                locatorType,
-                errMessage: returnedElem.err.message,
-              },
-            });
+          returnElement.element = returnedElem.element;
+          returnElement.err = {
+            ...returnElement.err,
+            [this.utils.crypt(locatorValue as string, locatorType)]: {
+              locatorValue,
+              locatorType,
+              errMessage: returnedElem.err.message,
+            },
+          };
 
-          if (returnedElem.err.message.includes("WaitTimedOut_")) {
+          if (returnedElem.err.message.includes('WaitTimedOut_')) {
             break;
           }
           current = current.next;
@@ -260,27 +235,19 @@ export class Element extends ExceptionHandler {
       }
       if (!returnElement.element) {
         throw Error(
-          `${loggerPrefix} Find element failed with error ${JSON.stringify(
-            Object.values(returnElement.err),
-            null,
-            4
-          )}`
+          `${loggerPrefix} Find element failed with error ${JSON.stringify(Object.values(returnElement.err), null, 4)}`
         );
       }
 
-      Object.values(returnElement.err).length
-        ? logMultiLocatorTries(returnElement, loggerPrefix)
-        : null;
+      if (Object.values(returnElement.err).length) logMultiLocatorTries(returnElement, loggerPrefix);
 
       return returnElement.element;
     } catch (ex) {
-      return super.catchException(
-        ex,
-        async () =>
-          await self.findElement({
-            ...args,
-            waitConditionTime: halvedWaitConditionTime(args.waitConditionTime!),
-          })
+      return super.catchException(ex, async () =>
+        self.findElement({
+          ...args,
+          waitConditionTime: halvedWaitConditionTime(args.waitConditionTime!),
+        })
       );
     }
   }
@@ -297,9 +264,7 @@ export class Element extends ExceptionHandler {
    * @returns {Promise<ElementFinder>}
    */
 
-  private async getElementByExpectedCondition(
-    args: IGetElementExpectedCondition
-  ): Promise<
+  private async getElementByExpectedCondition(args: IGetElementExpectedCondition): Promise<
     | {
         element: WebdriverIO.Element;
         err: any;
@@ -310,9 +275,9 @@ export class Element extends ExceptionHandler {
       }
   > {
     const loggerPrefix = `${this.fileName}.getElementByExpectedCondition :`;
-    let self: this = this;
+    const self: this = this;
     try {
-      const { element, waitCondition } = args;
+      const {element, waitCondition} = args;
 
       const shouldScrollAuto = shouldAutoScroll(waitCondition!);
       if (shouldScrollAuto) {
@@ -320,17 +285,14 @@ export class Element extends ExceptionHandler {
       }
 
       if (waitCondition !== Types.WAITCONDITIONS.PRESENCEOF) {
-        const waitConditionReturned = await ExplicitWaits.getWaitConditions(
-          args
-        );
+        const waitConditionReturned = await ExplicitWaits.getWaitConditions(args);
 
         await browser.waitUntil(
           // waitConditionReturned[0],
-          async () =>
-            await self.checkState(
-              waitConditionReturned[0],
-              waitConditionReturned[2]
-            ),
+          async () => {
+            const returnState = await self.checkState(waitConditionReturned[0], waitConditionReturned[2]);
+            return returnState;
+          },
           {
             timeout: waitConditionReturned[1],
             timeoutMsg: waitConditionReturned[2],
@@ -339,10 +301,10 @@ export class Element extends ExceptionHandler {
       }
 
       Logger.log(`${loggerPrefix} Wait condition passed`);
-      return { element, err: null };
+      return {element, err: null};
     } catch (err) {
       Logger.log(`${loggerPrefix} Wait condition not passed`);
-      return { element: null, err: err };
+      return {element: null, err};
     }
   }
 }

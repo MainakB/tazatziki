@@ -1,5 +1,5 @@
-import { Options } from "@wdio/types";
-import { LocatorTypes, WAITCONDITIONS } from "./exportTypes";
+import {Options} from '@wdio/types';
+import {LocatorTypes, WAITCONDITIONS} from './exportTypes';
 
 export type ElementFinder = any;
 
@@ -29,9 +29,7 @@ export interface IEvaluateWait extends IWaitCondition {
   element: ElementFinder;
 }
 
-export interface IFindElement
-  extends IPageObject,
-    Omit<IAutoScroll, "element"> {
+export interface IFindElement extends IPageObject, Omit<IAutoScroll, 'element'> {
   //   elementDetails?: LocatorObject;
   //   checkForJsError?: boolean;
 }
@@ -112,9 +110,9 @@ export type IRequestLocalChromeVersion = {
 };
 
 export enum LOGTYPESLIST {
-  TRACE = "trace",
-  DEBUG = "debug",
-  INFO = "info",
-  WARN = "warn",
-  SILENT = "silent",
+  TRACE = 'trace',
+  DEBUG = 'debug',
+  INFO = 'info',
+  WARN = 'warn',
+  SILENT = 'silent',
 }

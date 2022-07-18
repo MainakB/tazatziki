@@ -1,27 +1,33 @@
 {
-    "exclude": ["node_modules", "./node_modules", "dist", "**/__tests__/*", "Gruntfile.js"],
-    "include": ["globals.d.ts","index.ts","src/**/*"],
-    "compilerOptions": {
-        "rootDir": "./",
-        "target": "es2019",
-        "moduleResolution": "node",
-        "module":"commonjs",
-        "outDir": "dist",
-        "skipLibCheck": true,
-        "declaration": true   /* Generates corresponding '.d.ts' file. */,
-        "composite": true,
-        "declarationMap": true,
-        "types": ["node", "webdriverio/async", "@wdio/cucumber-framework", "expect-webdriverio", "@wdio/selenium-standalone-service"],
-        "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
-        "resolveJsonModule": true,
-        "strict": true /* Enable all strict type-checking options. */,
-        "noUnusedLocals": true /* Report errors on unused locals. */,
-        "noUnusedParameters": true /* Report errors on unused parameters. */,
-        "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
-        "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
-        "noImplicitThis": false /* Raise error on 'this' expressions with an implied 'any' type. */,
-        "inlineSourceMap": true /* Emit a single file with source maps instead of having a separate file. */,
-        "inlineSources": true /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */ ,
-        "allowSyntheticDefaultImports": true 
-    }
+  "exclude": ["node_modules", "./node_modules", "dist", "**/__tests__/*", "Gruntfile.js"],
+  "include": ["globals.d.ts", "index.ts", "src/**/*"],
+  "compilerOptions": {
+    "rootDir": "./",
+    "target": "es2019",
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "outDir": "dist",
+    "skipLibCheck": true,
+    "declaration": true /* Generates corresponding '.d.ts' file. */,
+    "composite": true,
+    "declarationMap": true,
+    "types": [
+      "node",
+      "webdriverio/async",
+      "@wdio/cucumber-framework",
+      "expect-webdriverio",
+      "@wdio/selenium-standalone-service"
+    ],
+    "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
+    "resolveJsonModule": true,
+    "strict": true /* Enable all strict type-checking options. */,
+    "noUnusedLocals": true /* Report errors on unused locals. */,
+    "noUnusedParameters": true /* Report errors on unused parameters. */,
+    "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
+    "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
+    "noImplicitThis": false /* Raise error on 'this' expressions with an implied 'any' type. */,
+    "inlineSourceMap": true /* Emit a single file with source maps instead of having a separate file. */,
+    "inlineSources": true /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */,
+    "allowSyntheticDefaultImports": true
+  }
 }

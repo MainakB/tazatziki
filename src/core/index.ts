@@ -28,6 +28,6 @@
 // }
 // export const CoreUtility = new Utility();
 
-export * from "./Assertions";
-export * from "./PageActions";
-export * from "./Element";
+export * from './Assertions';
+export * from './PageActions';
+export * from './Element';

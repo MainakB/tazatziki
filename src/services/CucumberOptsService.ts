@@ -1,10 +1,13 @@
-import { GLOBALFLAGS } from "../constants";
-import { ICucumberOptsParams } from "../types";
+import {GLOBALFLAGS} from '../constants';
+import {ICucumberOptsParams} from '../types';
 
 export class CucumberOptsService {
   static _instance: CucumberOptsService;
+
   private require = [...GLOBALFLAGS.STEPDEFPATH];
+
   private backtrace = false;
+
   private requireModule = [];
 
   private dryRun = false;
@@ -17,7 +20,7 @@ export class CucumberOptsService {
 
   private strict = false;
 
-  private tagExpression = "";
+  private tagExpression = '';
 
   private timeout = GLOBALFLAGS.STEPTIMEOUTWAITTIME;
 
@@ -34,8 +37,7 @@ export class CucumberOptsService {
     this.strict = args?.strict ?? this.strict;
     this.tagExpression = args?.tagExpression ?? this.tagExpression;
     this.timeout = args?.timeout ?? this.timeout;
-    this.ignoreUndefinedDefinitions =
-      args?.ignoreUndefinedDefinitions ?? this.ignoreUndefinedDefinitions;
+    this.ignoreUndefinedDefinitions = args?.ignoreUndefinedDefinitions ?? this.ignoreUndefinedDefinitions;
   }
 
   static getInstance(args?: ICucumberOptsParams) {
