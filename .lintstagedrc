@@ -1,0 +1,7 @@
+{
+   "Test_Modules/**/*.ts": [
+    "prettier --write",
+    "eslint --fix",
+    "git add"
+    ]
+}

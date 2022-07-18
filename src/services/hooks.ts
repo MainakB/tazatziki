@@ -1,7 +1,7 @@
 import cucumberJson from "wdio-cucumberjs-json-reporter";
 import * as fs from "fs";
 import * as path from "path";
-import { setValue } from "@wdio/shared-store-service";
+import { setValue, getValue } from "@wdio/shared-store-service";
 
 import { LocatorsCache } from "../services/LocatorsCache";
 import { StepDurationCalculator } from "../services/StepDurationCalculator";
@@ -79,10 +79,18 @@ export const hooks = {
    */
   onPrepare: [
     async function (_config: WebdriverIO.Config, _capabilities: any) {
+      console.log(
+        "Bekfore shared service ",
+        LocatorsCache.getInstance().getCachedLocators(),
+        JSON.stringify(LocatorsCache.getInstance().getCachedLocators())
+      );
+
       await setValue(
         "locatorsCache",
-        JSON.stringify(LocatorsCache.getInstance())
+        JSON.stringify(LocatorsCache.getInstance().getCachedLocators())
       );
+
+      console.log("SAfter set", await getValue("locatorsCache"));
     },
   ],
 

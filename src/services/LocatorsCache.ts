@@ -75,9 +75,9 @@ export class LocatorsCache {
     }
   }
 
-  static getInstance(commonLocators?: any) {
+  static getInstance(locators?: any) {
     if (!LocatorsCache._instance) {
-      LocatorsCache._instance = new LocatorsCache(commonLocators);
+      LocatorsCache._instance = new LocatorsCache(locators);
     }
     return LocatorsCache._instance;
   }
@@ -86,26 +86,63 @@ export class LocatorsCache {
     return this.cachedLocators;
   }
 
+  setCachedLocators(locators: any) {
+    // this.commonPoList = Object.values(locators);
+
+    this.cachedLocators = locators;
+    // this.initPageObjects(this.commonPoList);
+  }
+
   convertMapToObj(map: any) {
     const obj = {} as any;
     for (const [k, v] of map) obj[k] = v;
     return obj;
   }
 
+  // reduceLocatorsToObject(sources: any) {
+  //   const originalProperties = new Map();
+  //   const duplicateLocators = new Map();
+  //   for (const src of sources) {
+  //     for (const prop of Object.keys(src)) {
+  //       if (originalProperties.has(prop)) {
+  //         duplicateLocators.set(
+  //           prop,
+  //           `${JSON.stringify(src[prop])}. Name "${prop}" already exists in ${
+  //             originalProperties.get(prop).poParentObject
+  //           }`
+  //         );
+  //       } else {
+  //         originalProperties.set(prop, src[prop]);
+  //       }
+  //     }
+  //   }
+  //   if (duplicateLocators.size) {
+  //     throw new Error(
+  //       `${JSON.stringify(this.convertMapToObj(duplicateLocators))}`
+  //     );
+  //   }
+  //   return originalProperties;
+  // }
+
   reduceLocatorsToObject(sources: any) {
-    const originalProperties = new Map();
-    const duplicateLocators = new Map();
+    let originalProperties: any = {};
+    let duplicateLocators: any = {};
     for (const src of sources) {
       for (const prop of Object.keys(src)) {
-        if (originalProperties.has(prop)) {
-          duplicateLocators.set(
-            prop,
-            `${JSON.stringify(src[prop])}. Name "${prop}" already exists in ${
-              originalProperties.get(prop).poParentObject
-            }`
-          );
+        if (originalProperties[prop] !== undefined) {
+          duplicateLocators = {
+            ...duplicateLocators,
+            [prop]: `${JSON.stringify(
+              src[prop]
+            )}. Name "${prop}" already exists in ${
+              originalProperties[prop].poParentObject
+            }`,
+          };
         } else {
-          originalProperties.set(prop, src[prop]);
+          originalProperties = {
+            ...originalProperties,
+            [prop]: src[prop],
+          };
         }
       }
     }

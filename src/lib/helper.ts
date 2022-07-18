@@ -155,22 +155,19 @@ let findStoredObject = async (obj: string): Promise<Types.ILocators | null> => {
     `${filePath}.findStoredObject : Look up for object post camelcasing in element repos - "${obj}"`
   );
 
-  let locatorCache = LocatorsCache.getInstance().getCachedLocators();
-  if (!locatorCache.size) {
-    console.log("Locators cache empty");
-    locatorCache = JSON.parse((await getValue("locatorsCache")) as string);
-    console.log(
-      "JSON.parse",
-      JSON.parse((await getValue("locatorsCache")) as string)
+  let locatorCacheInstance = LocatorsCache.getInstance();
+  if (
+    !locatorCacheInstance.getCachedLocators() ||
+    !locatorCacheInstance.getCachedLocators().size
+  ) {
+    let parsedLocators = JSON.parse(
+      (await getValue("locatorsCache")) as string
     );
+
+    locatorCacheInstance.setCachedLocators(parsedLocators);
   }
-  console.log("Locators cache not empty");
-  const found = LocatorsCache.getInstance().getCachedLocators().get(obj);
-  // JSON.parse((await getValue("locatorsCache")) as string).get(
-  //   obj
-  // );
-  console.log("1111found", found);
-  // LocatorsCache.getInstance().getCachedLocators().get(obj);
+
+  const found = LocatorsCache.getInstance().getCachedLocators()[obj];
   const log = found
     ? `Found Object - ${JSON.stringify(found, null, 4)}`
     : "No entry found in the locators repo";
