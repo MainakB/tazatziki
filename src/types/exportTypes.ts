@@ -1,3 +1,13 @@
+import { LocatorObject } from "./commonTypes";
+export interface ILocators {
+  //   poParentObject: string;
+  description: string;
+  locator: LocatorObject[];
+}
+export interface ILocatorMetadataObject {
+  [key: string]: ILocators;
+}
+
 export enum LocatorTypes {
   ID = "id",
   NAME = "name",

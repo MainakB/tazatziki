@@ -4,9 +4,8 @@ import {
   IAutoScroll,
   LocatorObject,
   IFindElement,
-  WAITCONDITIONS,
   IGetElementExpectedCondition,
-  LocatorTypes,
+  Types,
   ReturnElementType,
 } from "../types";
 import {
@@ -58,27 +57,27 @@ export class Element extends ExceptionHandler {
     locatorValue: string | Function
   ): Promise<WebdriverIO.Element> {
     switch (locatorType) {
-      case LocatorTypes.ID:
+      case Types.LocatorTypes.ID:
         return $(`#${locatorValue}`);
-      case LocatorTypes.NAME:
+      case Types.LocatorTypes.NAME:
         return $(`*[name="${locatorValue as string}"]`);
-      case LocatorTypes.CLASSNAME:
+      case Types.LocatorTypes.CLASSNAME:
         return $(`.${locatorValue as string}`);
-      case LocatorTypes.XPATH:
-      case LocatorTypes.TAGNAME:
-      case LocatorTypes.CSS:
+      case Types.LocatorTypes.XPATH:
+      case Types.LocatorTypes.TAGNAME:
+      case Types.LocatorTypes.CSS:
         return $(locatorValue as string);
-      case LocatorTypes.LINKTEXT:
+      case Types.LocatorTypes.LINKTEXT:
         return $(`=${locatorValue as string}`);
-      case LocatorTypes.PARTIALLINKTEXT:
+      case Types.LocatorTypes.PARTIALLINKTEXT:
         return $(`*=${locatorValue as string}`);
-      case LocatorTypes.BUTTONTEXT:
+      case Types.LocatorTypes.BUTTONTEXT:
         return $(`button=${locatorValue as string}`);
-      case LocatorTypes.PARTIALBUTTONTEXT:
+      case Types.LocatorTypes.PARTIALBUTTONTEXT:
         return $(`button*=${locatorValue as string}`);
-      case LocatorTypes.DEEPCSS:
+      case Types.LocatorTypes.DEEPCSS:
         return $(`>>>${locatorValue as string}`);
-      // case LocatorTypes.JS:
+      // case Types.LocatorTypes.JS:
       //   return $(locatorValue as Function);
       default:
         return $(locatorValue as string);
@@ -108,7 +107,7 @@ export class Element extends ExceptionHandler {
     Logger.log(`${loggerPrefix} Perform auto scroll`);
 
     const waitConditionTimeCalculated = (() => {
-      return params.waitCondition === WAITCONDITIONS.PRESENCEOF
+      return params.waitCondition === Types.WAITCONDITIONS.PRESENCEOF
         ? params.waitConditionTime || GLOBALFLAGS.WAITCONDITIONTIMEOUTACTIONS
         : (() =>
             params.waitConditionTime ||
@@ -119,7 +118,7 @@ export class Element extends ExceptionHandler {
         await ExplicitWaits.getWaitConditions({
           ...params,
           waitConditionTime: waitConditionTimeCalculated,
-          waitCondition: WAITCONDITIONS.PRESENCEOF,
+          waitCondition: Types.WAITCONDITIONS.PRESENCEOF,
         });
 
       Logger.log(
@@ -319,7 +318,7 @@ export class Element extends ExceptionHandler {
         await self.autoScroll(args);
       }
 
-      if (waitCondition !== WAITCONDITIONS.PRESENCEOF) {
+      if (waitCondition !== Types.WAITCONDITIONS.PRESENCEOF) {
         const waitConditionReturned = await ExplicitWaits.getWaitConditions(
           args
         );

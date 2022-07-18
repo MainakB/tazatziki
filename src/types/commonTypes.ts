@@ -8,16 +8,6 @@ export type LocatorObject = {
   locatorValue: string | Function;
 };
 
-export interface ILocators {
-  //   poParentObject: string;
-  description: string;
-  locator: LocatorObject[];
-}
-
-export interface ILocatorMetadataObject {
-  [key: string]: ILocators;
-}
-
 export type IWaitCondition = {
   waitConditionTime?: number;
   waitCondition?: WAITCONDITIONS;

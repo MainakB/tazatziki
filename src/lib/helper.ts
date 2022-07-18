@@ -1,10 +1,10 @@
 import {
   ElementFinder,
-  ILocators,
-  WAITCONDITIONS,
+  Types,
+  // WAITCONDITIONS,
   LocatorObject,
   ReturnElementType,
-  LocatorTypes,
+  // LocatorTypes,
 } from "../types";
 
 import {
@@ -151,7 +151,7 @@ export function isElementFinder(
  *  @params : {pageObj} value passed
  *  @returns:  return the stored page object
  ************************************************************************************************ */
-let findStoredObject = (obj: string): ILocators | null => {
+let findStoredObject = (obj: string): Types.ILocators | null => {
   Logger.log(
     `${filePath}.findStoredObject : Look up for object post camelcasing in element repos - "${obj}"`
   );
@@ -217,7 +217,7 @@ export const getStoredObjectsJSFiles = (args: any): LocatorObject[] => {
     `${filePath}.getStoredObjectsJSFiles : Passed object before camelcasing - "${args.pageObject}"`
   );
   const obj = convertToCamelcase(args.pageObject as string);
-  let foundObject: ILocators | null = findStoredObject(obj);
+  let foundObject: Types.ILocators | null = findStoredObject(obj);
 
   if (foundObject && foundObject.locator && foundObject.locator.length) {
     for (let locatorObj of foundObject.locator) {
@@ -232,7 +232,7 @@ export const getStoredObjectsJSFiles = (args: any): LocatorObject[] => {
     foundObject = {
       locator: [
         {
-          locatorType: LocatorTypes.NONE,
+          locatorType: Types.LocatorTypes.NONE,
           locatorValue: args.pageObject,
         },
       ],
@@ -243,18 +243,18 @@ export const getStoredObjectsJSFiles = (args: any): LocatorObject[] => {
   return foundObject.locator;
 };
 
-export const shouldAutoScroll = (waitCondition: WAITCONDITIONS) => {
+export const shouldAutoScroll = (waitCondition: Types.WAITCONDITIONS) => {
   Logger.log(
     `${filePath}.shouldAutoScroll : Check if auto scroll when wait condition is ${waitCondition}`
   );
   const waitConditionsToScroll = [
-    WAITCONDITIONS.PRESENCEOF,
-    WAITCONDITIONS.ELEMENTTOBECLICKABLE,
-    WAITCONDITIONS.ELEMENTTOBESELECTED,
-    WAITCONDITIONS.TEXTNOTPRESENTINELEMENT,
-    WAITCONDITIONS.TEXTTOBEPRESENTINELEMENTVALUE,
-    WAITCONDITIONS.VISIBILITYOF,
-    WAITCONDITIONS.ELEMENTTOBEENABLED,
+    Types.WAITCONDITIONS.PRESENCEOF,
+    Types.WAITCONDITIONS.ELEMENTTOBECLICKABLE,
+    Types.WAITCONDITIONS.ELEMENTTOBESELECTED,
+    Types.WAITCONDITIONS.TEXTNOTPRESENTINELEMENT,
+    Types.WAITCONDITIONS.TEXTTOBEPRESENTINELEMENTVALUE,
+    Types.WAITCONDITIONS.VISIBILITYOF,
+    Types.WAITCONDITIONS.ELEMENTTOBEENABLED,
   ];
   const shouldAutoScrollToObj =
     waitConditionsToScroll.includes(waitCondition) || false;

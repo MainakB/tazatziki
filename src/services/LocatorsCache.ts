@@ -1,5 +1,5 @@
 // import { apm_m, predix_essentials } from "@apm_modules";
-import * as commonLocators from "./locators-common";
+import * as commonLocators from "../../../tzatziki-bl/dist/src/services";
 
 // import * as leftNavLocators from "./locators-left-navigation";
 

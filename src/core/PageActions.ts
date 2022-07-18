@@ -1,6 +1,6 @@
 "use strict";
 import { ExceptionHandler } from "./ExceptionHandler";
-import { IClick, IEnterText, WAITCONDITIONS } from "../types";
+import { IClick, IEnterText, Types } from "../types";
 import { Element } from "./Element";
 // import { Assertion } from "./Assertions";
 
@@ -134,7 +134,7 @@ export class Action extends ExceptionHandler {
     let self: this = this;
     let element: WebdriverIO.Element = await self.Element.findElement({
       ...args,
-      waitCondition: WAITCONDITIONS.ELEMENTTOBEENABLED,
+      waitCondition: Types.WAITCONDITIONS.ELEMENTTOBEENABLED,
     });
     try {
       if (args.clickBeforeTextInput) {
@@ -184,7 +184,7 @@ export class Action extends ExceptionHandler {
     let self: this = this;
     let element: WebdriverIO.Element = await self.Element.findElement({
       ...args,
-      waitCondition: WAITCONDITIONS.ELEMENTTOBECLICKABLE,
+      waitCondition: Types.WAITCONDITIONS.ELEMENTTOBECLICKABLE,
     });
 
     try {
