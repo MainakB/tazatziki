@@ -1,2 +1,2 @@
 export * from "./commonTypes";
-export * from "./exportTypes";
+export * as Types from "./exportTypes";

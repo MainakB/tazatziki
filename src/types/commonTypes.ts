@@ -8,16 +8,6 @@ export type LocatorObject = {
   locatorValue: string | Function;
 };
 
-export interface ILocators {
-  //   poParentObject: string;
-  description: string;
-  locator: LocatorObject[];
-}
-
-export interface ILocatorMetadataObject {
-  [key: string]: ILocators;
-}
-
 export type IWaitCondition = {
   waitConditionTime?: number;
   waitCondition?: WAITCONDITIONS;
@@ -59,6 +49,7 @@ export type IClick = IAction;
 
 export interface IEnterText extends IAction {
   inputText: string;
+  clickBeforeTextInput?: boolean;
 }
 
 type ILocatorError = {
@@ -79,7 +70,7 @@ export type IAppConstants = {
   RECOVERYWAITTIME: number;
   LOGTYPE: Options.WebDriverLogTypes;
   DEFAULTBROWSER: string;
-  STEPDEFPATH: string;
+  STEPDEFPATH: string[];
 };
 
 export type IWriteToDirectory = {
@@ -95,15 +86,22 @@ export type ICheckFileExists = {
 };
 
 export interface IRuntimeParameters {
-  browser?: string[] | string;
+  browser?: string;
   browserVersion?: string;
 }
 
 export interface ICucumberOptsParams {
-  suites: string[];
-  tags: string;
-  // browserVersion?: string;
-  // browserCaps?: any[];
+  require?: string[];
+  backtrace?: boolean;
+  requireModule?: (string | never)[];
+  dryRun?: boolean;
+  failFast?: boolean;
+  snippets?: boolean;
+  source?: boolean;
+  strict?: boolean;
+  tagExpression?: string;
+  timeout?: number;
+  ignoreUndefinedDefinitions?: boolean;
 }
 
 export type IRequestLocalChromeVersion = {

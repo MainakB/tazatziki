@@ -11,7 +11,7 @@ const runtimeConfigs = RuntimeConfigs.getInstance();
 // };
 
 const getCaps = async (option: string) => {
-  switch (option) {
+  switch (option.toLowerCase()) {
     // case "chrome-beta":
     //   return setParallelBrowserCount(browserCaps.chromeBetaCapabilities);
     // case "chrome-canary":
@@ -22,28 +22,42 @@ const getCaps = async (option: string) => {
     case "chrome":
       return browserCaps.chromeDefaultCapabilities;
     //   return setParallelBrowserCount(browserCaps.chromeDefaultCapabilities);
-    // case "edge":
-    //   return setParallelBrowserCount(browserCaps.microsoftEdgeCapabilities);
+    case "edge":
+    case "msedge":
+    case "microsoftedge":
+      return browserCaps.msEdgeDefaultCapabilities;
+    case "firefox":
+      return browserCaps.firefoxDefaultCapabilities;
     case "safari":
       return browserCaps.safariDefaultCapabilities;
     default:
-      Logger.info("Terminating test.Incorrect browser stack");
-      break;
+      throw new Error(
+        `Terminating test.Incorrect browser stack. Allowed values are (chrome, edge, msedge, safari, firefox) while passed value is ${option}.`
+      );
   }
-  return new Error("Terminating test.Incorrect browser stack");
 };
 
 export const multiCapabilities = async () => {
   const browser = runtimeConfigs.getBrowser();
   let browserCapsList = [];
   let valSent: string | string[] = "";
-  if (browser.indexOf(",") > -1) {
+
+  if (
+    browser.indexOf(",") > -1 ||
+    (browser.startsWith("[") && browser.endsWith("]"))
+  ) {
     valSent = (browser as string).replace("[", "");
     valSent = valSent.replace("]", "");
-    valSent = valSent.slice(0, browser.length).split(",");
+    valSent = valSent.slice(0, browser.length);
+    if (browser.indexOf(",") > -1) {
+      valSent = valSent.split(",");
+    } else {
+      valSent = new Array(valSent);
+    }
   } else {
     valSent = new Array(browser as string);
   }
+
   // const valSent = browser.indexOf(',') > -1 ? browser.replace('[').slice(0, browser.length).split(',') : new Array(browser);
   // const valSent = Array.isArray(browser) ? browser : new Array(browser.split(','));
   // for (let i = 0; i < valSent.length; i++) {

@@ -1,48 +1,51 @@
-// import { GLOBALFLAGS } from "../constants";
-// import { ICucumberOptsParams } from "../types";
+import { GLOBALFLAGS } from "../constants";
+import { ICucumberOptsParams } from "../types";
 
-// export class CucumberOptsService {
-//   static _instance: CucumberOptsService;
+export class CucumberOptsService {
+  static _instance: CucumberOptsService;
+  private require = [...GLOBALFLAGS.STEPDEFPATH];
+  private backtrace = false;
+  private requireModule = [];
 
-//   private browser: string[] | string = GLOBALFLAGS.DEFAULTBROWSER;
-//   private browserVersion: string = "";
-//   private browserCaps: any[] = [];
+  private dryRun = false;
 
-//   private constructor(args?: ICucumberOptsParams) {
-//     this.browser = args?.browser ?? this.browser;
-//     this.browserVersion = args?.browserVersion ?? this.browserVersion;
-//   }
+  private failFast = false;
 
-//   static getInstance(browser?: string[] | string, browserVersion?: string) {
-//     if (!CucumberOptsService._instance) {
-//       if (browser) {
-//         CucumberOptsService._instance = new CucumberOptsService({
-//           browser,
-//           browserVersion,
-//         });
-//       } else {
-//         CucumberOptsService._instance = new CucumberOptsService();
-//       }
-//     }
-//     return CucumberOptsService._instance;
-//   }
-//   getBrowser(): string | string[] {
-//     return this.browser;
-//   }
+  private snippets = true;
 
-//   getBrowserVersion(): string {
-//     return this.browserVersion;
-//   }
+  private source = true;
 
-//   setBrowserVersion(browserVersion: string) {
-//     this.browserVersion = browserVersion;
-//   }
+  private strict = false;
 
-//   setBrowserCaps(browserCaps: any[]) {
-//     this.browserCaps = browserCaps;
-//   }
+  private tagExpression = "";
 
-//   getBrowserCaps(): any[] {
-//     return this.browserCaps;
-//   }
-// }
+  private timeout = GLOBALFLAGS.STEPTIMEOUTWAITTIME;
+
+  private ignoreUndefinedDefinitions = false;
+
+  private constructor(args?: ICucumberOptsParams) {
+    this.require = args?.require ?? this.require;
+    this.backtrace = args?.backtrace ?? this.backtrace;
+    this.requireModule = (args?.requireModule ?? this.requireModule) as [];
+    this.dryRun = args?.dryRun ?? this.dryRun;
+    this.failFast = args?.failFast ?? this.failFast;
+    this.snippets = args?.snippets ?? this.snippets;
+    this.source = args?.source ?? this.source;
+    this.strict = args?.strict ?? this.strict;
+    this.tagExpression = args?.tagExpression ?? this.tagExpression;
+    this.timeout = args?.timeout ?? this.timeout;
+    this.ignoreUndefinedDefinitions =
+      args?.ignoreUndefinedDefinitions ?? this.ignoreUndefinedDefinitions;
+  }
+
+  static getInstance(args?: ICucumberOptsParams) {
+    if (!CucumberOptsService._instance) {
+      if (args && Object.keys(args).length) {
+        CucumberOptsService._instance = new CucumberOptsService(args);
+      } else {
+        CucumberOptsService._instance = new CucumberOptsService();
+      }
+    }
+    return CucumberOptsService._instance;
+  }
+}

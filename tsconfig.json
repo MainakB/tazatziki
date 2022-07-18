@@ -1,5 +1,5 @@
 {
-    "exclude": ["node_modules", "./node_modules", "dist", "**/__tests__/*", "Gruntfile.js","src/customers", "src/services-test"],
+    "exclude": ["node_modules", "./node_modules", "dist", "**/__tests__/*", "Gruntfile.js"],
     "include": ["globals.d.ts","index.ts","src/**/*"],
     "compilerOptions": {
         "rootDir": "./",

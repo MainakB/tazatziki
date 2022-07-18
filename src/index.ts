@@ -6,8 +6,14 @@
 // export { Logger, Launcher };
 
 import { Action, Element } from "./core";
-import { Logger, TestRunner, RuntimeConfigs } from "./services";
+import {
+  Logger,
+  TestRunner,
+  RuntimeConfigs,
+  LocatorsCache as LocatorCachingService,
+} from "./services";
 import { Utils } from "./lib";
+import { Types } from "./types";
 
 // import { Assertion } from "./Assertion";
 // import { Wait } from "./Wait";
@@ -20,6 +26,7 @@ class Utility {
   Logger: any;
   Util: Utils;
   TestRunner: TestRunner;
+  Types: any;
   //   resolveMultipleModuleSuites: Function;
   //   Assertion: Assertion;
   //   Wait: Wait;
@@ -39,7 +46,10 @@ class Utility {
     // this.Wait.Action = this.Action;
     this.Util = Utils.getInstance();
     this.TestRunner = TestRunner.getInstance();
+    // this.Types.LocatorTypes = Types.LocatorTypes;
+    // this.Types.WAITCONDITIONS = Types.WAITCONDITIONS;
   }
 }
 const Tzatziki = new Utility();
-export { Tzatziki, RuntimeConfigs };
+export { Tzatziki, RuntimeConfigs, Types, LocatorCachingService };
+// export { Types } from "./types";

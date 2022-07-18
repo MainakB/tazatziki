@@ -1,14 +1,10 @@
-import * as fs from "fs";
-import * as path from "path";
-import * as ChromeLauncher from "chrome-launcher";
-import * as http from "http";
-import { Logger } from "../services/Logger";
+import * as fs from 'fs';
+import * as path from 'path';
+import * as ChromeLauncher from 'chrome-launcher';
+import * as http from 'http';
+import {Logger} from '../services/Logger';
 
-import {
-  IWriteToDirectory,
-  ICheckFileExists,
-  IRequestLocalChromeVersion,
-} from "../types";
+import {IWriteToDirectory, ICheckFileExists, IRequestLocalChromeVersion} from '../types';
 
 export class Utils {
   private static _instance: Utils;
@@ -25,7 +21,7 @@ export class Utils {
    *@description : This function returns the POSIX format path
    ********************************************************************************************* */
   getPOSIXFormatPath(pathString: string): string {
-    return pathString.replace(/\\/g, "/");
+    return pathString.replace(/\\/g, '/');
   }
 
   /************************************************************************************************
@@ -46,7 +42,7 @@ export class Utils {
     const basePath = `${process.cwd()}\\Reports`;
     const posixBasePath = this.getPOSIXFormatPath(basePath);
     this.ifEnvElse(
-      "JENKINS_CI",
+      'JENKINS_CI',
       () => posixBasePath,
       () => basePath
     );
@@ -56,14 +52,12 @@ export class Utils {
    * @Description : This method resolves directory/file path based on the OS being used
    *********************************************************************************************** */
   resolveCrossPlatformPaths(windowsPatternPath: string, isCwd = true) {
-    const basePath = isCwd
-      ? `${process.cwd()}\\${windowsPatternPath}`
-      : windowsPatternPath;
+    const basePath = isCwd ? `${process.cwd()}\\${windowsPatternPath}` : windowsPatternPath;
     const macLinBasePath = this.getPOSIXFormatPath(basePath);
     return this.ifEnvElse(
-      "JENKINS_CI",
+      'JENKINS_CI',
       () => macLinBasePath,
-      () => (process.platform === "win32" ? basePath : macLinBasePath)
+      () => (process.platform === 'win32' ? basePath : macLinBasePath)
     );
   }
 
@@ -93,17 +87,15 @@ export class Utils {
         );
       return isFilePresent;
     } catch (err: any) {
-      Logger.log(
-        `src.lib.Utils.checkIfFileExists : Error checking if file exists - ${err.message}`
-      );
+      Logger.log(`src.lib.Utils.checkIfFileExists : Error checking if file exists - ${err.message}`);
       throw err;
     }
   }
 
-  moveFile(params: { src: string; dest: string }) {
-    fs.rename(params.src, params.dest, (err) => {
+  moveFile(params: {src: string; dest: string}) {
+    fs.rename(params.src, params.dest, err => {
       if (err) {
-        console.log(err);
+        throw err;
       }
     });
   }
@@ -112,7 +104,7 @@ export class Utils {
     let mp4Files: any[] = [];
     fs.readdirSync(dir).forEach((file: string) => {
       let fullPath = path.join(dir, file);
-      if (!fs.lstatSync(fullPath).isDirectory() && fullPath.includes(".mp4")) {
+      if (!fs.lstatSync(fullPath).isDirectory() && fullPath.includes('.mp4')) {
         mp4Files.push(fullPath);
       }
     });
@@ -129,10 +121,8 @@ export class Utils {
     if (str.match(/^[a-zA-Z0-9][A-Za-z0-9]*$/) === null) {
       return str
         .toLowerCase()
-        .replace(/(?:^\w|[A-Z]|\b\w)/g, (ltr, idx) =>
-          idx === 0 ? ltr.toLowerCase() : ltr.toUpperCase()
-        )
-        .replace(/\s+/g, "");
+        .replace(/(?:^\w|[A-Z]|\b\w)/g, (ltr, idx) => (idx === 0 ? ltr.toLowerCase() : ltr.toUpperCase()))
+        .replace(/\s+/g, '');
     }
     return str;
   }
@@ -147,9 +137,40 @@ export class Utils {
       fullPath = path.join(dir, file);
       fs.lstatSync(fullPath).isDirectory()
         ? this.traverseDir(fullPath)
-        : !fullPath.includes("index") && allPropsFile.add(fullPath);
+        : !fullPath.includes('index') && allPropsFile.add(fullPath);
     });
     return allPropsFile;
+  }
+
+  /** **********************************************************************************************
+   * @Description : This function scrapes the project repo for any locators file
+   *********************************************************************************************** */
+  traverseForLocatorsFiles(pathvalue?: string, allLocatorsFile?: Set<any>): Set<any> {
+    const cwd = pathvalue || `${process.cwd()}/dist/src/services`;
+
+    allLocatorsFile = allLocatorsFile || new Set();
+    let fullPath;
+    fs.readdirSync(cwd).forEach(file => {
+      fullPath = path.join(cwd, file);
+
+      fs.lstatSync(fullPath).isDirectory()
+        ? this.traverseForLocatorsFiles(fullPath, allLocatorsFile)
+        : !(file !== 'index.js' && fullPath.includes('/locators/') && fullPath.endsWith('.js')) ||
+          allLocatorsFile?.add(fullPath);
+    });
+    return allLocatorsFile;
+  }
+
+  /** **********************************************************************************************
+   * @Description : Import from a list of files
+   *********************************************************************************************** */
+  async importList(list: string[]): Promise<Set<any>> {
+    let fileImports = new Set();
+    for (let file of list) {
+      const fileValue = await import(file);
+      fileImports.add(fileValue);
+    }
+    return fileImports;
   }
 
   convertMapToObj(map: any) {
@@ -163,64 +184,47 @@ export class Utils {
   }
 
   crypt(text: string, salt: string) {
-    const textToChars = (text: string) =>
-      text.split("").map((c) => c.charCodeAt(0));
+    const textToChars = (text: string) => text.split('').map(c => c.charCodeAt(0));
 
-    const byteHex = (n: any) => ("0" + Number(n).toString(16)).substr(-2);
+    const byteHex = (n: any) => ('0' + Number(n).toString(16)).substr(-2);
 
-    const applySaltToChar = (code: any) =>
-      textToChars(salt).reduce((a, b) => a ^ b, code);
+    const applySaltToChar = (code: any) => textToChars(salt).reduce((a, b) => a ^ b, code);
 
-    return text
-      .split("")
-      .map(textToChars)
-      .map(applySaltToChar)
-      .map(byteHex)
-      .join("");
+    return text.split('').map(textToChars).map(applySaltToChar).map(byteHex).join('');
   }
 
   // 1. List out the path of test suite in an array and fetch the test suites for the listed modules
   async listTestSuitePaths(testModuleValue: string) {
     // const filePath = `dist/src/customers/replaceWithCustomerName/test-suite/test-suites-collection.js`;
     const filePath = `src/customers/replaceWithCustomerName/test-suite/test-suites-collection.json`;
-    let fileName = "";
+    let fileName = '';
     let fileExist = await this.checkIfFileExists({
-      filePath: filePath.replace("replaceWithCustomerName", testModuleValue),
+      filePath: filePath.replace('replaceWithCustomerName', testModuleValue),
       pathInCwd: true,
     });
 
     if (!fileExist) {
       fileExist = await this.checkIfFileExists({
-        filePath: filePath.replace(
-          "replaceWithCustomerName",
-          testModuleValue.toLowerCase()
-        ),
+        filePath: filePath.replace('replaceWithCustomerName', testModuleValue.toLowerCase()),
         pathInCwd: true,
       });
 
       if (!fileExist) {
         throw new Error(
-          "Test suite file does not exist " +
-            filePath.replace(
-              "replaceWithCustomerName",
-              testModuleValue.toLowerCase()
-            )
+          'Test suite file does not exist ' + filePath.replace('replaceWithCustomerName', testModuleValue.toLowerCase())
         );
       } else {
-        fileName = filePath.replace(
-          "replaceWithCustomerName",
-          testModuleValue.toLowerCase()
-        );
+        fileName = filePath.replace('replaceWithCustomerName', testModuleValue.toLowerCase());
       }
     } else {
-      fileName = filePath.replace("replaceWithCustomerName", testModuleValue);
+      fileName = filePath.replace('replaceWithCustomerName', testModuleValue);
     }
     return require(`${process.cwd()}/${fileName}`);
   }
 
   async createDirectory(path: string) {
     try {
-      await fs.promises.mkdir(path, { recursive: true });
+      await fs.promises.mkdir(path, {recursive: true});
     } catch (err: any) {
       Logger.log(`src.lib.Utils : Error creating directory ${err.message}`);
       throw err;
@@ -229,29 +233,21 @@ export class Utils {
   async writeFile(props: IWriteToDirectory) {
     try {
       await this.createDirectory(props.directoryPath);
-      await fs.promises.writeFile(
-        `${props.directoryPath}${props.fileName}`,
-        props.data
-      );
+      await fs.promises.writeFile(`${props.directoryPath}${props.fileName}`, props.data);
       return this.checkIfFileExists({
         filePath: `${props.directoryPath}${props.fileName}`,
         pathInCwd: true,
         timerInMs: 5000,
       });
     } catch (err: any) {
-      console.log(
-        `Error writing to test suite collection master ${err.message}`
-      );
+      Logger.log(`src.lib.Utils.writeFile : Error writing to test suite collection master ${err.message}`);
       throw err;
     }
   }
 
   // 2. Resolve the test suites collection from multiple modules,to form a master test suite
-  async resolveMultipleModuleSuites(
-    testModuleListFromExec: string
-  ): Promise<object> {
+  async resolveMultipleModuleSuites(testModuleListFromExec: string): Promise<object> {
     const allSuites = await this.listTestSuitePaths(testModuleListFromExec);
-    console.log("all siuite now", allSuites);
     let suiteObject = JSON.stringify(allSuites).replace(
       /features\//g,
       `src/customers/${testModuleListFromExec.toLocaleLowerCase()}/features/`
@@ -262,7 +258,6 @@ export class Utils {
   async resolveTestSuiteCollection(suiteNames: string, suiteObject: object) {
     let testSuite = {};
     let missingTestSuite = [];
-    console.log("term", suiteNames, suiteObject);
     for (let suiteName of suiteNames) {
       if ((suiteObject as any)[suiteName]) {
         testSuite = {
@@ -275,21 +270,21 @@ export class Utils {
     }
     if (missingTestSuite.length) {
       Logger.log(
-        `src.lib/Utils.resolveTestSuiteCollection : Following test suites are missing in the test suite collection - ${missingTestSuite}. Please make sure the test suite is present in the test suite collections file.`
+        `src.lib.Utils.resolveTestSuiteCollection : Following test suites are missing in the test suite collection - ${missingTestSuite}. Please make sure the test suite is present in the test suite collections file.`
       );
     }
 
-    return { testSuite, suiteNames };
+    return {testSuite, suiteNames};
   }
 
   getRequestLocalChromeVersion(options: IRequestLocalChromeVersion) {
     return new Promise((resolve, reject) => {
-      const request = http.get(options, (response) => {
-        let data = "";
-        response.on("data", (chunk) => {
+      const request = http.get(options, response => {
+        let data = '';
+        response.on('data', chunk => {
           data += chunk;
         });
-        response.on("end", () => {
+        response.on('end', () => {
           if (response.statusCode === 200) {
             resolve(JSON.parse(data));
           } else {
@@ -301,41 +296,38 @@ export class Utils {
         request.abort();
       });
 
-      request.on("error", reject);
+      request.on('error', reject);
     });
   }
 
   async getInstalledChromeVersion() {
     const chromeOpts: ChromeLauncher.Options = {
-      chromeFlags: ["--no-sandbox", "--headless"],
+      chromeFlags: ['--no-sandbox', '--headless'],
     };
     const chromeInstance = await ChromeLauncher.launch(chromeOpts);
     const options = {
-      host: "127.0.0.1",
+      host: '127.0.0.1',
       port: chromeInstance.port,
-      path: "/json/version",
-      requestType: "GET",
+      path: '/json/version',
+      requestType: 'GET',
     };
     const response: any = await this.getRequestLocalChromeVersion(options);
     await chromeInstance.kill();
 
-    return response.Browser.split("/")[1];
+    return response.Browser.split('/')[1];
   }
 
   getTestModuleName(testModule: string) {
     let testModuleList;
-    if (testModule !== undefined && testModule !== "undefined") {
-      (testModule.charAt(0) === "[" &&
-        testModule.charAt(testModule.length - 1) === "]") ||
-      (testModule.charAt(0) === "{" &&
-        testModule.charAt(testModule.length - 1) === "}") ||
-      (testModule.charAt(0) === "(" &&
-        testModule.charAt(testModule.length - 1) === ")")
-        ? (testModuleList = testModule.slice(1, -1).split(","))
-        : (testModuleList = testModule.split(","));
+    if (testModule !== undefined && testModule !== 'undefined') {
+      (testModule.charAt(0) === '[' && testModule.charAt(testModule.length - 1) === ']') ||
+      (testModule.charAt(0) === '{' && testModule.charAt(testModule.length - 1) === '}') ||
+      (testModule.charAt(0) === '(' && testModule.charAt(testModule.length - 1) === ')')
+        ? (testModuleList = testModule.slice(1, -1).split(','))
+        : (testModuleList = testModule.split(','));
     } else {
       throw new Error(
-        "Please pass one or multiple test module name(s) to run the test against. Pass the flag as --testModuleName"
+        'Please pass one or multiple test module name(s) to run the test against. Pass the flag as --testModuleName'
       );
     }
     return testModuleList;
@@ -344,27 +336,23 @@ export class Utils {
   async resolveTestSuite(suites: string, customer: string) {
     if (!suites) {
       throw new Error(
-        "Please pass one or multiple test suite name(s), to run the test against. Pass the flag as --suites=abc for a single suite abc or --suites=[abc,xyz] for more than one."
+        'Please pass one or multiple test suite name(s), to run the test against. Pass the flag as --suites=abc for a single suite abc or --suites=[abc,xyz] for more than one.'
       );
     }
     let testSuiteParamVal = suites;
-    let testSuiteParam = "";
-    if (
-      testSuiteParamVal.charAt(0) === "[" &&
-      testSuiteParamVal.charAt(testSuiteParamVal.length - 1) === "]"
-    ) {
+    let testSuiteParam = '';
+    if (testSuiteParamVal.charAt(0) === '[' && testSuiteParamVal.charAt(testSuiteParamVal.length - 1) === ']') {
       testSuiteParam = JSON.parse(
         testSuiteParamVal
-          .split("]")
+          .split(']')
           .join('"]')
-          .split("[")
+          .split('[')
           .join('["')
-          .split(",")
+          .split(',')
           .join('","')
-          .replace(/\]\",\"/g, "],")
+          .replace(/\]\",\"/g, '],')
       );
     }
-    console.log("testSuiteParam next", testSuiteParam);
 
     const suiteObject = await this.resolveMultipleModuleSuites(customer);
     return this.resolveTestSuiteCollection(testSuiteParam, suiteObject);

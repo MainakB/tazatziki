@@ -1,92 +1,100 @@
 /* eslint no-useless-constructor: "warn" */
 import { GLOBALFLAGS } from "../constants";
-import { WAITCONDITIONS, IEvaluateWait } from "../types";
+import { Types, IEvaluateWait } from "../types";
 import * as EC from "wdio-wait-for";
 const filePath = "src.core.ExplicitWaits";
 
 export class ExplicitWaits {
   private constructor(private name: string) {}
 
-  public static VISIBILITYOF = new ExplicitWaits(WAITCONDITIONS.VISIBILITYOF);
+  public static VISIBILITYOF = new ExplicitWaits(
+    Types.WAITCONDITIONS.VISIBILITYOF
+  );
 
-  public static PRESENCEOF = new ExplicitWaits(WAITCONDITIONS.PRESENCEOF);
+  public static PRESENCEOF = new ExplicitWaits(Types.WAITCONDITIONS.PRESENCEOF);
 
   public static ELEMENTTOBEENABLED = new ExplicitWaits(
-    WAITCONDITIONS.ELEMENTTOBEENABLED
+    Types.WAITCONDITIONS.ELEMENTTOBEENABLED
   );
   public static TEXTTOBEPRESENTINELEMENT = new ExplicitWaits(
-    WAITCONDITIONS.TEXTTOBEPRESENTINELEMENT
+    Types.WAITCONDITIONS.TEXTTOBEPRESENTINELEMENT
   );
 
   public static TEXTTOBEPRESENTINELEMENTVALUE = new ExplicitWaits(
-    WAITCONDITIONS.TEXTTOBEPRESENTINELEMENTVALUE
+    Types.WAITCONDITIONS.TEXTTOBEPRESENTINELEMENTVALUE
   );
 
   public static ELEMENTTOBECLICKABLE = new ExplicitWaits(
-    WAITCONDITIONS.ELEMENTTOBECLICKABLE
+    Types.WAITCONDITIONS.ELEMENTTOBECLICKABLE
   );
 
-  public static URLCONTAINS = new ExplicitWaits(WAITCONDITIONS.URLCONTAINS);
+  public static URLCONTAINS = new ExplicitWaits(
+    Types.WAITCONDITIONS.URLCONTAINS
+  );
 
-  public static URLIS = new ExplicitWaits(WAITCONDITIONS.URLIS);
+  public static URLIS = new ExplicitWaits(Types.WAITCONDITIONS.URLIS);
 
   public static ALERTISPRESENT = new ExplicitWaits(
-    WAITCONDITIONS.ALERTISPRESENT
+    Types.WAITCONDITIONS.ALERTISPRESENT
   );
 
-  public static TITLECONTAINS = new ExplicitWaits(WAITCONDITIONS.TITLECONTAINS);
+  public static TITLECONTAINS = new ExplicitWaits(
+    Types.WAITCONDITIONS.TITLECONTAINS
+  );
 
-  public static TITLEIS = new ExplicitWaits(WAITCONDITIONS.TITLEIS);
+  public static TITLEIS = new ExplicitWaits(Types.WAITCONDITIONS.TITLEIS);
 
-  public static STALENESSOF = new ExplicitWaits(WAITCONDITIONS.STALENESSOF);
+  public static STALENESSOF = new ExplicitWaits(
+    Types.WAITCONDITIONS.STALENESSOF
+  );
 
   public static ELEMENTTOBESELECTED = new ExplicitWaits(
-    WAITCONDITIONS.ELEMENTTOBESELECTED
+    Types.WAITCONDITIONS.ELEMENTTOBESELECTED
   );
 
-  public static ABSENCEOF = new ExplicitWaits(WAITCONDITIONS.ABSENCEOF);
+  public static ABSENCEOF = new ExplicitWaits(Types.WAITCONDITIONS.ABSENCEOF);
 
   public static TEXTNOTPRESENTINELEMENT = new ExplicitWaits(
-    WAITCONDITIONS.TEXTNOTPRESENTINELEMENT
+    Types.WAITCONDITIONS.TEXTNOTPRESENTINELEMENT
   );
 
   public static TEXTNOTPRESENTINELEMENTVALUE = new ExplicitWaits(
-    WAITCONDITIONS.TEXTNOTPRESENTINELEMENTVALUE
+    Types.WAITCONDITIONS.TEXTNOTPRESENTINELEMENTVALUE
   );
 
   public static ELEMENTNOTCLICKABLE = new ExplicitWaits(
-    WAITCONDITIONS.ELEMENTNOTCLICKABLE
+    Types.WAITCONDITIONS.ELEMENTNOTCLICKABLE
   );
 
   public static URLDOESNOTCONTAIN = new ExplicitWaits(
-    WAITCONDITIONS.URLDOESNOTCONTAIN
+    Types.WAITCONDITIONS.URLDOESNOTCONTAIN
   );
 
-  public static URLISNOT = new ExplicitWaits(WAITCONDITIONS.URLISNOT);
+  public static URLISNOT = new ExplicitWaits(Types.WAITCONDITIONS.URLISNOT);
 
   public static ALERTISNOTPRESENT = new ExplicitWaits(
-    WAITCONDITIONS.ALERTISNOTPRESENT
+    Types.WAITCONDITIONS.ALERTISNOTPRESENT
   );
 
   public static TITLEDOESNOTCONTAIN = new ExplicitWaits(
-    WAITCONDITIONS.TITLEDOESNOTCONTAIN
+    Types.WAITCONDITIONS.TITLEDOESNOTCONTAIN
   );
 
-  public static TITLEISNOT = new ExplicitWaits(WAITCONDITIONS.TITLEISNOT);
+  public static TITLEISNOT = new ExplicitWaits(Types.WAITCONDITIONS.TITLEISNOT);
 
   public static NOTSTALENESSOF = new ExplicitWaits(
-    WAITCONDITIONS.NOTSTALENESSOF
+    Types.WAITCONDITIONS.NOTSTALENESSOF
   );
 
   public static ELEMENTNOTSELECTED = new ExplicitWaits(
-    WAITCONDITIONS.ELEMENTNOTSELECTED
+    Types.WAITCONDITIONS.ELEMENTNOTSELECTED
   );
 
   public static INVISIBILITYOF = new ExplicitWaits(
-    WAITCONDITIONS.INVISIBILITYOF
+    Types.WAITCONDITIONS.INVISIBILITYOF
   );
 
-  public static AND = new ExplicitWaits(WAITCONDITIONS.AND);
+  public static AND = new ExplicitWaits(Types.WAITCONDITIONS.AND);
 
   public static getWaitConditions(params: IEvaluateWait): Promise<any[]> {
     const { waitCondition } = params;
@@ -166,175 +174,175 @@ export class ExplicitWaits {
     let returnValue: any[];
 
     switch (this.name) {
-      case WAITCONDITIONS.VISIBILITYOF:
+      case Types.WAITCONDITIONS.VISIBILITYOF:
         returnValue = [
           EC.visibilityOf(element),
           waitConditionTime,
           `Expected element not visible in the page.`,
         ];
         break;
-      case WAITCONDITIONS.INVISIBILITYOF:
+      case Types.WAITCONDITIONS.INVISIBILITYOF:
         returnValue = [
           EC.invisibilityOf(element),
           waitConditionTime,
           `Expected element not invisible in the page.`,
         ];
         break;
-      case WAITCONDITIONS.PRESENCEOF:
+      case Types.WAITCONDITIONS.PRESENCEOF:
         returnValue = [
           EC.presenceOf(element),
           waitConditionTime,
           `Expected element not present in the page.`,
         ];
         break;
-      case WAITCONDITIONS.ELEMENTTOBEENABLED:
+      case Types.WAITCONDITIONS.ELEMENTTOBEENABLED:
         returnValue = [
           EC.elementToBeEnabled(element),
           waitConditionTime,
           `Expected element not enabled in the page.`,
         ];
         break;
-      case WAITCONDITIONS.TEXTTOBEPRESENTINELEMENT:
+      case Types.WAITCONDITIONS.TEXTTOBEPRESENTINELEMENT:
         returnValue = [
           EC.textToBePresentInElement(element, oElementText!),
           waitConditionTime,
           `Expected text ${oElementText} not present`,
         ];
         break;
-      case WAITCONDITIONS.TEXTTOBEPRESENTINELEMENTVALUE:
+      case Types.WAITCONDITIONS.TEXTTOBEPRESENTINELEMENTVALUE:
         returnValue = [
           EC.textToBePresentInElementValue(element, oElementText!),
           waitConditionTime,
           `Expected text ${oElementText} not present`,
         ];
         break;
-      case WAITCONDITIONS.ELEMENTTOBECLICKABLE:
+      case Types.WAITCONDITIONS.ELEMENTTOBECLICKABLE:
         returnValue = [
           EC.elementToBeClickable(element),
           waitConditionTime,
           `Element not clickable`,
         ];
         break;
-      case WAITCONDITIONS.URLCONTAINS:
+      case Types.WAITCONDITIONS.URLCONTAINS:
         returnValue = [
           EC.urlContains(element),
           waitConditionTime,
           `Expected Url not loaded`,
         ];
         break;
-      case WAITCONDITIONS.URLIS:
+      case Types.WAITCONDITIONS.URLIS:
         returnValue = [
           EC.urlIs(element),
           waitConditionTime,
           `Expected Url not loaded`,
         ];
         break;
-      case WAITCONDITIONS.ALERTISPRESENT:
+      case Types.WAITCONDITIONS.ALERTISPRESENT:
         returnValue = [
           EC.alertIsPresent(),
           waitConditionTime,
           `Expected Alert not present`,
         ];
         break;
-      case WAITCONDITIONS.TITLECONTAINS:
+      case Types.WAITCONDITIONS.TITLECONTAINS:
         returnValue = [
           EC.titleContains(element),
           waitConditionTime,
           `Title does not contain the expected value - ${element}`,
         ];
         break;
-      case WAITCONDITIONS.TITLEIS:
+      case Types.WAITCONDITIONS.TITLEIS:
         returnValue = [
           EC.titleIs(element),
           waitConditionTime,
           `Title is not the expected value - ${element}`,
         ];
         break;
-      case WAITCONDITIONS.STALENESSOF:
+      case Types.WAITCONDITIONS.STALENESSOF:
         returnValue = [
           EC.stalenessOf(element),
           waitConditionTime,
           `Staleness of element is false`,
         ];
         break;
-      case WAITCONDITIONS.ELEMENTTOBESELECTED:
+      case Types.WAITCONDITIONS.ELEMENTTOBESELECTED:
         returnValue = [
           EC.elementToBeSelected(element),
           waitConditionTime,
           `Element is not selected`,
         ];
         break;
-      case WAITCONDITIONS.ABSENCEOF:
+      case Types.WAITCONDITIONS.ABSENCEOF:
         returnValue = [
           EC.not(EC.presenceOf(element)),
           waitConditionTime,
           `Expected element  present in the page.`,
         ];
         break;
-      case WAITCONDITIONS.TEXTNOTPRESENTINELEMENT:
+      case Types.WAITCONDITIONS.TEXTNOTPRESENTINELEMENT:
         returnValue = [
           EC.not(EC.textToBePresentInElement(element, oElementText!)),
           waitConditionTime,
           `Unexpected text ${oElementText} present`,
         ];
         break;
-      case WAITCONDITIONS.TEXTNOTPRESENTINELEMENTVALUE:
+      case Types.WAITCONDITIONS.TEXTNOTPRESENTINELEMENTVALUE:
         returnValue = [
           EC.not(EC.textToBePresentInElementValue(element, oElementText!)),
           waitConditionTime,
           `Unexpected text ${oElementText}  present`,
         ];
         break;
-      case WAITCONDITIONS.ELEMENTNOTCLICKABLE:
+      case Types.WAITCONDITIONS.ELEMENTNOTCLICKABLE:
         returnValue = [
           EC.not(EC.elementToBeClickable(element)),
           waitConditionTime,
           `Element is clickable`,
         ];
         break;
-      case WAITCONDITIONS.URLDOESNOTCONTAIN:
+      case Types.WAITCONDITIONS.URLDOESNOTCONTAIN:
         returnValue = [
           EC.not(EC.urlContains(oElementText!)),
           waitConditionTime,
           `Unexpected Url loaded`,
         ];
         break;
-      case WAITCONDITIONS.URLISNOT:
+      case Types.WAITCONDITIONS.URLISNOT:
         returnValue = [
           EC.not(EC.urlIs(oElementText!)),
           waitConditionTime,
           `Unexpected Url loaded`,
         ];
         break;
-      case WAITCONDITIONS.ALERTISNOTPRESENT:
+      case Types.WAITCONDITIONS.ALERTISNOTPRESENT:
         returnValue = [
           EC.not(EC.alertIsPresent()),
           waitConditionTime,
           `Unexpected Alert present`,
         ];
         break;
-      case WAITCONDITIONS.TITLEDOESNOTCONTAIN:
+      case Types.WAITCONDITIONS.TITLEDOESNOTCONTAIN:
         returnValue = [
           EC.not(EC.titleContains(oElementText!)),
           waitConditionTime,
           `Title contains the unexpected value - ${oElementText}`,
         ];
         break;
-      case WAITCONDITIONS.TITLEISNOT:
+      case Types.WAITCONDITIONS.TITLEISNOT:
         returnValue = [
           EC.not(EC.titleIs(oElementText!)),
           waitConditionTime,
           `Title is the unexpected value - ${oElementText}`,
         ];
         break;
-      case WAITCONDITIONS.NOTSTALENESSOF:
+      case Types.WAITCONDITIONS.NOTSTALENESSOF:
         returnValue = [
           EC.not(EC.stalenessOf(element)),
           waitConditionTime,
           `Staleness of element is true`,
         ];
         break;
-      case WAITCONDITIONS.ELEMENTNOTSELECTED:
+      case Types.WAITCONDITIONS.ELEMENTNOTSELECTED:
         returnValue = [
           EC.not(EC.elementToBeSelected(element)),
           waitConditionTime,

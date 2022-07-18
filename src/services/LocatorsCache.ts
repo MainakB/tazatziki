@@ -1,5 +1,5 @@
 // import { apm_m, predix_essentials } from "@apm_modules";
-import * as commonLocators from "./locators-common";
+// import * as commonLocators from "./locators-common";
 // import * as leftNavLocators from "./locators-left-navigation";
 
 // const commonPoList: any[] = Object.values(commonLocators);
@@ -62,15 +62,15 @@ import * as commonLocators from "./locators-common";
 //   console.log("test glovbal", global);
 // };
 
+import {Utils} from '../lib/Utils';
+// Utils.traverseForLocatorsFiles
 export class LocatorsCache {
   private static _instance: LocatorsCache;
-  cachedLocators: any;
-  commonPoList: any[];
+  private cachedLocators: any;
+  private commonPoList: any[] = [];
+  private fileName = 'src.services.LocatorsCache';
 
-  private constructor() {
-    this.commonPoList = Object.values(commonLocators);
-    this.cachedLocators = this.initPageObjects(this.commonPoList);
-  }
+  private constructor() {}
 
   static getInstance() {
     if (!LocatorsCache._instance) {
@@ -78,49 +78,70 @@ export class LocatorsCache {
     }
     return LocatorsCache._instance;
   }
-  convertMapToObj(map: any) {
+
+  getCachedLocators() {
+    return this.cachedLocators;
+  }
+
+  computeAndAppendCachedLocators(locators: any) {
+    this.commonPoList = Object.values(locators);
+    this.cachedLocators = this.initPageObjects(this.commonPoList);
+  }
+
+  setCachedLocators(locators: any) {
+    this.cachedLocators = locators;
+  }
+
+  async getProjectLocators() {
+    const utils = Utils.getInstance();
+    const locatorFiles = Array.from(utils.traverseForLocatorsFiles());
+    const locators = this.initPageObjects(Object.values(Array.from(await utils.importList(locatorFiles))[0]));
+    this.setCachedLocators(locators);
+  }
+
+  protected convertMapToObj(map: any) {
     const obj = {} as any;
     for (const [k, v] of map) obj[k] = v;
     return obj;
   }
 
-  reduceLocatorsToObject(sources: any) {
-    const originalProperties = new Map();
-    const duplicateLocators = new Map();
+  protected reduceLocatorsToObject(sources: any) {
+    let originalProperties: any = {};
+    let duplicateLocators: any = {};
     for (const src of sources) {
       for (const prop of Object.keys(src)) {
-        if (originalProperties.has(prop)) {
-          duplicateLocators.set(
-            prop,
-            `${JSON.stringify(src[prop])}. Name "${prop}" already exists in ${
-              originalProperties.get(prop).poParentObject
-            }`
-          );
+        if (originalProperties[prop] !== undefined) {
+          duplicateLocators = {
+            ...duplicateLocators,
+            [prop]: `${JSON.stringify(src[prop], null, 4)}. Name "${prop}" already exists in ${
+              originalProperties[prop].poParentObject
+            }`,
+          };
         } else {
-          originalProperties.set(prop, src[prop]);
+          originalProperties = {
+            ...originalProperties,
+            [prop]: src[prop],
+          };
         }
       }
     }
-    if (duplicateLocators.size) {
-      throw new Error(
-        `${JSON.stringify(this.convertMapToObj(duplicateLocators))}`
-      );
+    if (Object.values(duplicateLocators).length) {
+      throw new Error(`${this.fileName} Duplicate Locators Error: \n${JSON.stringify(duplicateLocators)}`);
     }
     return originalProperties;
   }
 
-  importedPoList(commonPoList: any[]) {
-    console.time("Duplicate locators check completed in: ");
+  protected importedPoList(commonPoList: any[]) {
+    console.time(`${this.fileName} Duplicate locators check completed in: `);
     const cachedLocators = this.reduceLocatorsToObject([
       ...commonPoList,
-      // ...leftNavPoList,
-      // ...(await getLocatorsFromPromise()).reduce(reduceLocators, []),
+      ...(this.cachedLocators ? [this.cachedLocators] : []),
     ]);
-    console.timeEnd("Duplicate locators check completed in: ");
+    console.timeEnd(`${this.fileName} Duplicate locators check completed in: `);
     return cachedLocators;
   }
 
-  initPageObjects(commonPoList: any[]) {
+  protected initPageObjects(commonPoList: any[]) {
     const locatorsList = this.importedPoList(commonPoList);
     return locatorsList;
   }

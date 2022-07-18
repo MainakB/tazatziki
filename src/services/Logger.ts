@@ -141,7 +141,6 @@ class LoggerService {
   // }
 
   async log(message: string, type = GLOBALFLAGS.LOGTYPE) {
-    // console.log("why error", message, type);
     // Level of logging verbosity: trace | debug | info | warn | error | silent
     await this.logger.log(type || "info", message);
     // switch (type) {
