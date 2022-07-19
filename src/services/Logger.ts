@@ -1,5 +1,5 @@
-import * as winston from "winston";
-import { GLOBALFLAGS } from "../constants";
+import * as winston from 'winston';
+import {GLOBALFLAGS} from '../constants';
 
 // const dateFormat = () => {
 //   return new Date(Date.now()).toUTCString();
@@ -15,13 +15,13 @@ const customLevels = {
     silent: 6,
   },
   colors: {
-    error: "red",
-    warn: "yellow",
-    info: "cyan",
-    debug: "green",
-    trace: "blue",
-    silent: "orange",
-    date: "grey",
+    error: 'red',
+    warn: 'yellow',
+    info: 'cyan',
+    debug: 'green',
+    trace: 'blue',
+    silent: 'orange',
+    date: 'grey',
   },
 };
 const colorizer = winston.format.colorize();
@@ -30,13 +30,11 @@ const options = {
     format: winston.format.combine(
       winston.format.splat(),
       winston.format.align(),
-      winston.format.printf((info) => {
-        return (
-          colorizer.colorize("date", `${new Date().toISOString()} `) +
+      winston.format.printf(info => (
+          colorizer.colorize('date', `${new Date().toISOString()} `) +
           colorizer.colorize(info.level, `${info.level.toUpperCase()} `) +
           `Testlogger: ${info.message.trim()}`
-        );
-      })
+        ))
     ),
     handleExceptions: true,
   },
@@ -44,11 +42,7 @@ const options = {
     format: winston.format.combine(
       winston.format.splat(),
       winston.format.align(),
-      winston.format.printf((info) => {
-        return `${new Date().toISOString()} | ${info.level.toUpperCase()} | ${
-          info.message
-        }`;
-      })
+      winston.format.printf(info => `${new Date().toISOString()} | ${info.level.toUpperCase()} | ${info.message}`)
     ),
     handleExceptions: true,
   },
@@ -56,7 +50,9 @@ const options = {
 //     Level of logging verbosity: trace | debug | info | warn | error | silent
 class LoggerService {
   private logger: winston.Logger;
+
   private static _instance: LoggerService;
+
   private constructor() {
     this.logger = winston.createLogger({
       levels: customLevels.levels,
@@ -65,7 +61,7 @@ class LoggerService {
         new winston.transports.Console({
           ...options.console,
           ...{
-            level: "info",
+            level: 'info',
           },
         }),
 
@@ -80,14 +76,14 @@ class LoggerService {
           ...options.file,
           ...{
             filename: `Reports/debug.log`,
-            level: "debug",
+            level: 'debug',
           },
         }),
         new winston.transports.File({
           ...options.file,
           ...{
             filename: `Reports/all-logs.log`,
-            level: "silent",
+            level: 'silent',
           },
         }),
         // new winston.transports.File({
@@ -142,7 +138,7 @@ class LoggerService {
 
   async log(message: string, type = GLOBALFLAGS.LOGTYPE) {
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    await this.logger.log(type || "info", message);
+    await this.logger.log(type || 'info', message);
     // switch (type) {
     //   case "error":
     //     await this.logger.log("error", message);

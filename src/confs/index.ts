@@ -1,1 +1,1 @@
-export * from "./wdio.conf";
+export * from './wdio.conf';

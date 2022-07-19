@@ -1,5 +1,5 @@
 // "use strict";
-import { ExceptionHandler } from "./ExceptionHandler";
+import {ExceptionHandler} from './ExceptionHandler';
 // import { assert } from "chai";
 // import { locatorDetails, SortingOrder, ElementFinder } from "../types";
 // import { Element } from "./Element";

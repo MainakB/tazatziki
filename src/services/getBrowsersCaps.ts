@@ -1,5 +1,5 @@
-import * as browserCaps from "../types/browsers-capabilities";
-import { RuntimeConfigs } from "../services";
+import * as browserCaps from '../types/browsers-capabilities';
+import {RuntimeConfigs} from '../services';
 
 const runtimeConfigs = RuntimeConfigs.getInstance();
 
@@ -18,17 +18,17 @@ const getCaps = async (option: string) => {
     //   return setParallelBrowserCount(browserCaps.chromeCanaryCapabilities);
     // case "chrome-dev":
     //   return setParallelBrowserCount(browserCaps.chromeDevCapabilities);
-    case "chrome-latest":
-    case "chrome":
+    case 'chrome-latest':
+    case 'chrome':
       return browserCaps.chromeDefaultCapabilities;
     //   return setParallelBrowserCount(browserCaps.chromeDefaultCapabilities);
-    case "edge":
-    case "msedge":
-    case "microsoftedge":
+    case 'edge':
+    case 'msedge':
+    case 'microsoftedge':
       return browserCaps.msEdgeDefaultCapabilities;
-    case "firefox":
+    case 'firefox':
       return browserCaps.firefoxDefaultCapabilities;
-    case "safari":
+    case 'safari':
       return browserCaps.safariDefaultCapabilities;
     default:
       throw new Error(
@@ -40,17 +40,14 @@ const getCaps = async (option: string) => {
 export const multiCapabilities = async () => {
   const browser = runtimeConfigs.getBrowser();
   let browserCapsList = [];
-  let valSent: string | string[] = "";
+  let valSent: string | string[] = '';
 
-  if (
-    browser.indexOf(",") > -1 ||
-    (browser.startsWith("[") && browser.endsWith("]"))
-  ) {
-    valSent = (browser as string).replace("[", "");
-    valSent = valSent.replace("]", "");
+  if (browser.indexOf(',') > -1 || (browser.startsWith('[') && browser.endsWith(']'))) {
+    valSent = (browser as string).replace('[', '');
+    valSent = valSent.replace(']', '');
     valSent = valSent.slice(0, browser.length);
-    if (browser.indexOf(",") > -1) {
-      valSent = valSent.split(",");
+    if (browser.indexOf(',') > -1) {
+      valSent = valSent.split(',');
     } else {
       valSent = new Array(valSent);
     }
@@ -65,9 +62,7 @@ export const multiCapabilities = async () => {
   //   console.log("caop received is", cap);
   //   browserCapsList.push(cap);
   // }
-  browserCapsList = await Promise.all(
-    valSent.map(async (browserVal) => await getCaps(browserVal))
-  ).then((caps) => caps);
+  browserCapsList = await Promise.all(valSent.map(async browserVal => getCaps(browserVal))).then(caps => caps);
   runtimeConfigs.setBrowserCaps(browserCapsList);
 };
 

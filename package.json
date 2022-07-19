@@ -1,6 +1,6 @@
 {
   "name": "@kaniamb/tzatziki-core",
-  "version": "1.0.35",
+  "version": "1.0.37",
   "description": "A webdriverio test project scaffolding",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -34,16 +34,22 @@
     "winston": "^3.8.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-conventional": "^17.0.3",
+    "@typescript-eslint/eslint-plugin": "5.30.7",
+    "@typescript-eslint/parser": "5.30.7",
+    "commitizen": "^4.2.5",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.20.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
-    "husky": "^8.0.1",
+    "husky": "^8.0.0",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1"
   },
   "scripts": {
-    "prepare": "npm run compile:all",
+    "prepare": "npm run compile:all && husky install",
     "version": "git add -A src",
     "postversion": "git push && git push --tags",
     "compile:all": "tsc --diagnostics",

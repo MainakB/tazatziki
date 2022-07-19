@@ -1,13 +1,17 @@
-import { IRuntimeParameters } from "../types";
-import { GLOBALFLAGS } from "../constants";
+import {IRuntimeParameters} from '../types';
+import {GLOBALFLAGS} from '../constants';
 
 export class RuntimeConfigs {
   private static _instance: RuntimeConfigs;
 
   private suites: string[] | string = [];
-  private customer: string = "";
+
+  private customer: string = '';
+
   private browser: string = GLOBALFLAGS.DEFAULTBROWSER;
-  private browserVersion: string = "";
+
+  private browserVersion: string = '';
+
   private browserCaps: any[] = [];
 
   private constructor(args?: IRuntimeParameters) {
@@ -17,10 +21,7 @@ export class RuntimeConfigs {
 
   static getInstance(browser?: string, browserVersion?: string) {
     if (!RuntimeConfigs._instance) {
-      if (
-        (Array.isArray(browser) && browser.length) ||
-        (!Array.isArray(browser) && browser)
-      ) {
+      if ((Array.isArray(browser) && browser.length) || (!Array.isArray(browser) && browser)) {
         RuntimeConfigs._instance = new RuntimeConfigs({
           browser,
           browserVersion,

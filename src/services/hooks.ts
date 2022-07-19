@@ -5,7 +5,7 @@ import {setValue} from '@wdio/shared-store-service';
 
 import {LocatorsCache} from '../services/LocatorsCache';
 import {StepDurationCalculator} from '../services/StepDurationCalculator';
-import {CdnFileMerger} from '../services/CdnFileMerger';
+// import {CdnFileMerger} from '../services/CdnFileMerger';
 import {CucumberLoggerService} from './CucumberLoggerService';
 import {RuntimeConfigs} from '../services/RuntimeConfigs';
 
@@ -30,7 +30,8 @@ export const hooks = {
    * @param {Array.<String>} specs List of spec file paths that are to be run
    * @param {String} cid worker id (e.g. 0-0)
    */
-  beforeSession: function (_config: any, _capabilities: any, _specs: any, _cid: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  beforeSession (_config: any, _capabilities: any, _specs: any, _cid: any) {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
@@ -49,7 +50,8 @@ export const hooks = {
    * @param {number}             result.duration  duration of scenario in milliseconds
    * @param {Object}             context          Cucumber World object
    */
-  afterStep: async function (_step: any, _scenario: any, result: any, _context: Object) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async afterStep (_step: any, _scenario: any, result: any, _context: Object) {
     const cucumberLoggerInstance = CucumberLoggerService.getInstance();
     if (!result.passed) {
       const stream: string = await browser.takeScreenshot();
@@ -68,12 +70,11 @@ export const hooks = {
    * @param {Array.<Object>} capabilities list of capabilities details
    */
   onPrepare: [
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async function (_config: WebdriverIO.Config, _capabilities: any) {
       await setValue('locatorsCache', JSON.stringify(LocatorsCache.getInstance().getCachedLocators()));
     },
   ],
-
-  // LocatorsCache.getInstance();
 
   /**
    * Gets executed before a worker process is spawned and can be used to initialise specific service
@@ -135,7 +136,8 @@ export const hooks = {
    * @param {IPickle}            scenario scenario pickle
    * @param {Object}             context  Cucumber World object
    */
-  beforeStep: function (_step: any, _scenario: any, _context: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  beforeStep (_step: any, _scenario: any, _context: any) {
     StepDurationCalculator.getInstance().setDateTime();
   },
 
@@ -193,7 +195,8 @@ export const hooks = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {<Object>} results object containing test results
    */
-  onComplete: function (_exitCode: any, _config: any, _capabilities: any, _results: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onComplete (_exitCode: any, _config: any, _capabilities: any, _results: any) {
     // Generate the report when it all tests are done
     generate({
       // Required
@@ -221,6 +224,6 @@ export const hooks = {
     const oldPath = path.resolve(process.cwd(), 'Reports/report/merged-output.json');
     const newPath = path.resolve(process.cwd(), 'Reports/results.json');
     fs.renameSync(oldPath, newPath);
-    CdnFileMerger();
+    // CdnFileMerger();
   },
 };

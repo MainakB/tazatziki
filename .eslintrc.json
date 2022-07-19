@@ -1,58 +1,50 @@
- {
-    "extends": ["airbnb-base", "prettier"],
-    "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint"],
-    "env": {
-      "browser": true,
-      "es6": true
-    },
-    "globals": {
-      "Logger": "readonly",
-      "browser": "readonly",
-      "protractor": "readonly",
-      "EC": "readonly",
-      "element": "readonly",
-      "by": "readonly",
-      "chai": "readonly",
-      "expect": "readonly",
-      "assert": "readonly",
-      "should": "readonly",
-      "chaiAsPromised": "readonly",
-      "pageObjects": "writable"
-    },
-    "rules": {
-      "one-var": "off",
-      "no-bitwise": "off",
-      "no-underscore-dangle": "off",
-      "no-unused-expressions": "off",
-      "prefer-template": "off",
-      "no-restricted-globals": "off",
-      "no-unused-vars": "off",
-      "no-console": "off",
-      "camelcase": "off",
-      "global-require": "off",
-      "no-await-in-loop": "off",
-      "prefer-destructuring": "off",
-      "import/prefer-default-export": "off",
-      "import/no-unresolved": "off",
-      "import/no-dynamic-require": "off",
-      "import/extensions": "off",
-      "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
-      "no-empty-function": ["warn", {"allow": ["constructors"]}],
-      "no-param-reassign": ["warn", {"props": false}],
-      "no-use-before-define": [
-        "error",
-        {
-          "variables": false,
-          "functions": false
-        }
-      ],
-      "no-plusplus": [
-        "error",
-        {
-          "allowForLoopAfterthoughts": true
-        }
-      ],
-      "import/no-extraneous-dependencies": ["off"]
-    }
+{
+  "extends": ["airbnb-base", "prettier"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jquery": true
+  },
+  "globals": {
+    "WebdriverIO": "readonly",
+    "browser": "readonly"
+  },
+  "rules": {
+    "one-var": "off",
+    "no-bitwise": "off",
+    "no-underscore-dangle": "off",
+    // "no-unused-expressions": "error",
+    "prefer-template": "off",
+    "no-restricted-globals": "off",
+    "no-unused-vars": "off",
+    "no-shadow":"off",
+    "no-console": "warn",
+    // "camelcase": "off",
+    "global-require": "off",
+    "no-await-in-loop": "off",
+    "no-useless-constructor": "off",
+    // "prefer-destructuring": "off",
+    "import/prefer-default-export": "off",
+    "import/no-unresolved": "off",
+    "import/no-dynamic-require": "off",
+    "import/extensions": "off",
+    "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
+    "no-empty-function": ["warn", {"allow": ["constructors"]}],
+    "no-param-reassign": ["warn", {"props": false}],
+    "no-use-before-define": "off",
+    "no-plusplus": [
+      "error",
+      {
+        "allowForLoopAfterthoughts": true
+      }
+    ],
+    "import/no-extraneous-dependencies": ["off"],
+    "@typescript-eslint/no-unused-vars": ["error"],
+    "@typescript-eslint/no-use-before-define": ["error"],
+
+    "@typescript-eslint/no-useless-constructor": ["off"],
+    "@typescript-eslint/no-shadow": ["error"]
   }
+}

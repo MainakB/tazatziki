@@ -1,11 +1,14 @@
-import { GLOBALFLAGS } from "../constants";
+import {GLOBALFLAGS} from '../constants';
 
 export class StepDurationCalculator {
   private static _instance: StepDurationCalculator;
+
   private dateTime: Date = new Date();
+
   private actionDateTime: Date = new Date();
-  private actionWaitConditionTime: number =
-    GLOBALFLAGS.WAITCONDITIONTIMEOUTACTIONS;
+
+  private actionWaitConditionTime: number = GLOBALFLAGS.WAITCONDITIONTIMEOUTACTIONS;
+
   private stopStep: boolean = false;
 
   private constructor() {
