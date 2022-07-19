@@ -1,12 +1,13 @@
-"use strict";
-import { ExceptionHandler } from "./ExceptionHandler";
-import { IClick, IEnterText, Types } from "../types";
-import { Element } from "./Element";
+'use strict';
+import {ExceptionHandler} from './ExceptionHandler';
+import {IClick, IEnterText, Types} from '../types';
+import {Element} from './Element';
 // import { Assertion } from "./Assertions";
 
 export class Action extends ExceptionHandler {
   Element: Element;
   // Assertion: Assertion;
+  private fileName: string = `src.core.PageActions`;
 
   constructor() {
     super();
@@ -141,13 +142,10 @@ export class Action extends ExceptionHandler {
         await self.click(args);
       }
       await element.setValue(args.inputText);
-      Logger.log("Entered text '" + args.inputText + "' to the element");
+      Logger.log(`${this.fileName}.enterText : Entered text ${args.inputText} to the element`);
     } catch (exception) {
       args.clickBeforeTextInput = !args.clickBeforeTextInput;
-      await super.catchException(
-        exception,
-        async () => await self.enterText(args)
-      );
+      await super.catchException(exception, async () => await self.enterText(args));
     }
   }
 
@@ -165,9 +163,55 @@ export class Action extends ExceptionHandler {
 
     try {
       await browser.url(path);
-      Logger.log("Element is clicked");
+      Logger.log(`${this.fileName}.open : Opened url ${path}`);
     } catch (ex) {
       await super.catchException(ex, async () => await self.open(path));
+    }
+  }
+
+  //   /**
+  //    * clears the text in the input element
+  //    * clears the text in an element that is resolved using passed parameter: locator_details or keyname
+  //    * @method clear
+  //    * @param elementDetails {string |locatorDetails | ElementFinder} KeyName or type locatorDetails or an element
+  //    * @param oTimeWait {number} optional wait time for an element - default wait time is 40000ms
+  //    * @throws {TimeOutError} when the element is not present
+  //    * @throws {Please Provide Element Details} when elementDetails param is null or undefined
+  //    */
+  async clear(args: IClick): Promise<void> {
+    let self: this = this;
+
+    let element: WebdriverIO.Element = await self.Element.findElement({
+      ...args,
+      waitCondition: Types.WAITCONDITIONS.ELEMENTTOBECLICKABLE,
+    });
+
+    try {
+      await element.clearValue();
+      Logger.log(`${this.fileName}.clear : Text in the element is cleared`);
+    } catch (ex) {
+      await super.catchException(ex, async () => self.clear(args));
+    }
+  }
+
+  /**
+   * clears the text in the input element and enetrs textA
+   * clears the text in an element that is resolved using passed parameter: locator_details or keyname
+   * @method clearAndEnterText
+   * @param elementDetails {string |locatorDetails | ElementFinder} KeyName or type locatorDetails or an element
+   * @param oTimeWait {number} optional wait time for an element - default wait time is 40000ms
+   * @throws {TimeOutError} when the element is not present
+   * @throws {Please Provide Element Details} when elementDetails param is null or undefined
+   */
+  async clearAndEnterText(args: IEnterText): Promise<void> {
+    let self: this = this;
+    try {
+      await self.clear(args);
+      Logger.log(`${this.fileName}.clearAndEnterText : Text in the element is cleared`);
+      await self.enterText(args);
+      Logger.log(`${this.fileName}.clearAndEnterText : Enter text completed`);
+    } catch (ex) {
+      await super.catchException(ex, async () => self.clear(args));
     }
   }
 
@@ -189,7 +233,7 @@ export class Action extends ExceptionHandler {
 
     try {
       await element.click();
-      Logger.log("Element is clicked");
+      Logger.log(`${this.fileName}.click : Element is clicked`);
     } catch (ex) {
       await super.catchException(ex, async () => await self.click(args));
     }
@@ -221,36 +265,6 @@ export class Action extends ExceptionHandler {
   //       await super.catchException(
   //         ex,
   //         async () => await self.jsClick(elementDetails, oTimeWait)
-  //       );
-  //     }
-  //   }
-
-  //   /**
-  //    * clears the text in the input element
-  //    * clears the text in an element that is resolved using passed parameter: locator_details or keyname
-  //    * @method clear
-  //    * @param elementDetails {string |locatorDetails | ElementFinder} KeyName or type locatorDetails or an element
-  //    * @param oTimeWait {number} optional wait time for an element - default wait time is 40000ms
-  //    * @throws {TimeOutError} when the element is not present
-  //    * @throws {Please Provide Element Details} when elementDetails param is null or undefined
-  //    */
-  //   async clear(
-  //     elementDetails: string | locatorDetails | ElementFinder,
-  //     oTimeWait?: number
-  //   ): Promise<void> {
-  //     let self: this = this;
-  //     let element: ElementFinder = await toElementFinder(
-  //       self.Element,
-  //       elementDetails,
-  //       oTimeWait
-  //     );
-  //     try {
-  //       await element.clearValue();
-  //       Logger.log("Text in the element is cleared");
-  //     } catch (ex) {
-  //       await super.catchException(
-  //         ex,
-  //         async () => await self.clear(elementDetails, oTimeWait)
   //       );
   //     }
   //   }
