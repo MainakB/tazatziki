@@ -1,8 +1,6 @@
 import * as fs from 'fs';
 
-import {Logger} from './Logger';
-
-export const CdnFileMerger = () => {
+(() => {
   try {
     const originalCucumberReportHtmlFile = 'Reports/report/index.html';
     const newCucumberReportHtmlFile = 'Reports/report/index2.html';
@@ -69,12 +67,13 @@ export const CdnFileMerger = () => {
 
       // Create new cucumber html report file.
       fs.writeFileSync(newCucumberReportHtmlFile, text);
-      Logger.log(`src.services.CdnFileMerger : Html report file created successfully with CDN assets.`);
+
+      console.log(`src.services.CdnFileMerger : Html report file created successfully with CDN assets.`);
     } else
-      Logger.log(`src.services.CdnFileMerger : ${originalCucumberReportHtmlFile} html report file does not exist.`);
+      console.log(`src.services.CdnFileMerger : ${originalCucumberReportHtmlFile} html report file does not exist.`);
   } catch (ex: any) {
-    Logger.log(
+    console.log(
       `src.services.CdnFileMerger : Error occurred while embedding CSS/JS cdn file path to html report file - \n ${ex.message}`
     );
   }
-};
+})();

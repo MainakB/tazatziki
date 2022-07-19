@@ -20,7 +20,7 @@
     "no-restricted-globals": "off",
     "no-unused-vars": "off",
     "no-shadow":"off",
-    "no-console": "error",
+    "no-console": "warn",
     // "camelcase": "off",
     "global-require": "off",
     "no-await-in-loop": "off",
