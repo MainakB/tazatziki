@@ -1,4 +1,3 @@
-
 import {ExceptionHandler} from './ExceptionHandler';
 import {IClick, IEnterText, Types} from '../types';
 import {Element} from './Element';
@@ -7,6 +6,7 @@ import {Logger} from '../services';
 
 export class Action extends ExceptionHandler {
   Element: Element;
+
   // Assertion: Assertion;
   private fileName: string = `src.core.PageActions`;
 
@@ -125,14 +125,34 @@ export class Action extends ExceptionHandler {
   /**
    * Enters data to the input element
    * Enters Data to an element that is either resolved using passed  parameter: locator_details or keyname.
-   * @method enterData
+   * @method enterText
    * @param elementDetails {string |locatorDetails | ElementFinder} KeyName or type locatorDetails or an element
    * @param inputText {string} data that needs to be passed to input
    * @param oTimeWait {number} optional wait time for an element - default wait time is 40000ms
    * @throws {TimeOutError} when the element is not present
    * @throws {Please Provide Element Details} when elementDetails param is null or undefined
    */
-  async enterText(args: IEnterText): Promise<void> {
+  async enterText(args: IEnterText | Array<IEnterText>): Promise<void> {
+    if (Array.isArray(args)) {
+      await this.enterTextInLoopObject(args);
+    } else if (Array.isArray(args.pageObject)) {
+      await this.enterTextInLoopArray(args);
+    } else {
+      await this.enterTextSingle(args);
+    }
+  }
+
+  /**
+   * Enters data to the input element
+   * Enters Data to an element that is either resolved using passed  parameter: locator_details or keyname.
+   * @method enterTextSingle
+   * @param elementDetails {string |locatorDetails | ElementFinder} KeyName or type locatorDetails or an element
+   * @param inputText {string} data that needs to be passed to input
+   * @param oTimeWait {number} optional wait time for an element - default wait time is 40000ms
+   * @throws {TimeOutError} when the element is not present
+   * @throws {Please Provide Element Details} when elementDetails param is null or undefined
+   */
+  async enterTextSingle(args: IEnterText): Promise<void> {
     const self: this = this;
     const element: WebdriverIO.Element = await self.Element.findElement({
       ...args,
@@ -143,11 +163,50 @@ export class Action extends ExceptionHandler {
         await self.click(args);
       }
       await element.setValue(args.inputText);
-      Logger.log(`${this.fileName}.enterText : Entered text ${args.inputText} to the element`);
+      Logger.log(`${this.fileName}.enterTextSingle : Entered text ${args.inputText} to the element`);
     } catch (exception) {
       args.clickBeforeTextInput = !args.clickBeforeTextInput;
       await super.catchException(exception, async () => self.enterText(args));
     }
+  }
+
+  /**
+   * Enters data to the input element
+   * Enters Data to an element that is either resolved using passed  parameter: locator_details or keyname.
+   * @method enterTextInLoopArray
+   * @param elementDetails {string |locatorDetails | ElementFinder} KeyName or type locatorDetails or an element
+   * @param inputText {string} data that needs to be passed to input
+   * @param oTimeWait {number} optional wait time for an element - default wait time is 40000ms
+   * @throws {TimeOutError} when the element is not present
+   * @throws {Please Provide Element Details} when elementDetails param is null or undefined
+   */
+  protected async enterTextInLoopArray(args: IEnterText): Promise<void> {
+    Logger.log(`${this.fileName}.enterTextInLoopArray : Enter text with options ${JSON.stringify(args)}`);
+    for (let i = 0; i < args.pageObject.length; i++) {
+      await this.enterTextSingle({
+        ...args,
+        pageObject: (args.pageObject as string[])[i],
+      });
+    }
+    Logger.log(`${this.fileName}.enterTextInLoopArray : All text values were keyed in from the array list.`);
+  }
+
+  /**
+   * Enters data to the input element
+   * Enters Data to an element that is either resolved using passed  parameter: locator_details or keyname.
+   * @method enterTextInLoopObject
+   * @param elementDetails {string |locatorDetails | ElementFinder} KeyName or type locatorDetails or an element
+   * @param inputText {string} data that needs to be passed to input
+   * @param oTimeWait {number} optional wait time for an element - default wait time is 40000ms
+   * @throws {TimeOutError} when the element is not present
+   * @throws {Please Provide Element Details} when elementDetails param is null or undefined
+   */
+  protected async enterTextInLoopObject(args: Array<IEnterText>): Promise<void> {
+    Logger.log(`${this.fileName}.enterTextInLoopObject : Enter text with options ${JSON.stringify(args)}`);
+    for (let i = 0; i < args.length; i++) {
+      await this.enterTextSingle(args[i]);
+    }
+    Logger.log(`${this.fileName}.enterTextInLoopObject : All text values were keyed in from the object list.`);
   }
 
   /**
@@ -180,9 +239,9 @@ export class Action extends ExceptionHandler {
   //    * @throws {Please Provide Element Details} when elementDetails param is null or undefined
   //    */
   async clear(args: IClick): Promise<void> {
-    let self: this = this;
+    const self: this = this;
 
-    let element: WebdriverIO.Element = await self.Element.findElement({
+    const element: WebdriverIO.Element = await self.Element.findElement({
       ...args,
       waitCondition: Types.WAITCONDITIONS.ELEMENTTOBECLICKABLE,
     });
@@ -205,7 +264,7 @@ export class Action extends ExceptionHandler {
    * @throws {Please Provide Element Details} when elementDetails param is null or undefined
    */
   async clearAndEnterText(args: IEnterText): Promise<void> {
-    let self: this = this;
+    const self: this = this;
     try {
       await self.clear(args);
       Logger.log(`${this.fileName}.clearAndEnterText : Text in the element is cleared`);
@@ -225,8 +284,32 @@ export class Action extends ExceptionHandler {
    * @throws {TimeOutError} when the element is not present
    * @throws {Please Provide Element Details} when elementDetails param is null or undefined
    */
-  async click(args: IClick): Promise<void> {
+  async click(args: IClick | Array<IClick>): Promise<void> {
     const self: this = this;
+
+    if (Array.isArray(args)) {
+      // await this.clickInLoopObject(args);
+      await self.runObjectInLoop(args, self.clickSingle);
+    } else if (Array.isArray(args.pageObject)) {
+      // await this.clickInLoopArray(args);
+      await self.runArrayInLoop(args, self.clickSingle);
+    } else {
+      await self.clickSingle(args);
+    }
+  }
+
+  /**
+   * Clicks the element passed
+   * Clicks on element that is resolved using passed parameter: locator_details or keyname
+   * @method click
+   * @param elementDetails {string |locatorDetails | ElementFinder} KeyName or type locatorDetails or an element
+   * @param oTimeWait {number} optional wait time for an element - default wait time is 40000ms
+   * @throws {TimeOutError} when the element is not present
+   * @throws {Please Provide Element Details} when elementDetails param is null or undefined
+   */
+  protected async clickSingle(args: IClick): Promise<void> {
+    const self: this = this;
+    Logger.log(`${this.fileName}.clickSingle : Click on element with options ${JSON.stringify(args)}`);
     const element: WebdriverIO.Element = await self.Element.findElement({
       ...args,
       waitCondition: Types.WAITCONDITIONS.ELEMENTTOBECLICKABLE,
@@ -234,11 +317,48 @@ export class Action extends ExceptionHandler {
 
     try {
       await element.click();
-      Logger.log(`${this.fileName}.click : Element is clicked`);
+      Logger.log(`${this.fileName}.clickSingle : Element is clicked`);
     } catch (ex) {
       await super.catchException(ex, async () => self.click(args));
     }
   }
+
+  // /**
+  //  * Clicks the array list of element passed
+  //  * Clicks on element that is resolved using passed parameter: locator_details or keyname
+  //  * @method clickInLoopArray
+  //  * @param elementDetails {string |locatorDetails | ElementFinder} KeyName or type locatorDetails or an element
+  //  * @param oTimeWait {number} optional wait time for an element - default wait time is 40000ms
+  //  * @throws {TimeOutError} when the element is not present
+  //  * @throws {Please Provide Element Details} when elementDetails param is null or undefined
+  //  */
+  // protected async clickInLoopArray(args: IClick): Promise<void> {
+  //   Logger.log(`${this.fileName}.clickInLoopArray : Click on element with options ${JSON.stringify(args)}`);
+  //   for (let i = 0; i < args.pageObject.length; i++) {
+  //     await this.clickSingle({
+  //       ...args,
+  //       pageObject: (args.pageObject as string[])[i],
+  //     });
+  //   }
+  //   Logger.log(`${this.fileName}.clickInLoopArray : All elements in the array are clicked.`);
+  // }
+
+  // /**
+  //  * Clicks the list of objects of element passed
+  //  * Clicks on element that is resolved using passed parameter: locator_details or keyname
+  //  * @method clickInLoopObject
+  //  * @param elementDetails {string |locatorDetails | ElementFinder} KeyName or type locatorDetails or an element
+  //  * @param oTimeWait {number} optional wait time for an element - default wait time is 40000ms
+  //  * @throws {TimeOutError} when the element is not present
+  //  * @throws {Please Provide Element Details} when elementDetails param is null or undefined
+  //  */
+  // protected async clickInLoopObject(args: Array<IClick>): Promise<void> {
+  //   Logger.log(`${this.fileName}.clickInLoopObject : Click on element with options ${JSON.stringify(args)}`);
+  //   for (let i = 0; i < args.length; i++) {
+  //     await this.clickSingle(args[i]);
+  //   }
+  //   Logger.log(`${this.fileName}.clickInLoopObject : All elements in the object list are clicked.`);
+  // }
 
   //   /**
   //    * Clicks the element passed using javascript directly
@@ -915,4 +1035,23 @@ export class Action extends ExceptionHandler {
   //       }
   //     }
   //   }
+
+  protected async runArrayInLoop(args: any, cb: Function): Promise<void> {
+    Logger.log(`${this.fileName}.runArrayInLoop : Running ${cb} in loop with options ${JSON.stringify(args)}`);
+    for (let i = 0; i < args.pageObject.length; i++) {
+      await cb({
+        ...args,
+        pageObject: (args.pageObject as string[])[i],
+      });
+    }
+    Logger.log(`${this.fileName}.runArrayInLoop : Array loop completed succesfuly.`);
+  }
+
+  protected async runObjectInLoop(args: Array<any>, cb: Function): Promise<void> {
+    Logger.log(`${this.fileName}.runObjectInLoop : Running ${cb} in loop with options ${JSON.stringify(args)}`);
+    for (let i = 0; i < args.length; i++) {
+      await cb(args[i]);
+    }
+    Logger.log(`${this.fileName}.runObjectInLoop : Object loop completed succesfuly.`);
+  }
 }
