@@ -8,6 +8,7 @@ import {IWriteToDirectory, ICheckFileExists, IRequestLocalChromeVersion} from '.
 
 export class Utils {
   private static _instance: Utils;
+
   private constructor() {}
 
   static getInstance() {
@@ -24,9 +25,9 @@ export class Utils {
     return pathString.replace(/\\/g, '/');
   }
 
-  /************************************************************************************************
-   * @Description : Check if the environment is for headless execution
-   *********************************************************************************************** */
+  /** *********************************************************************
+   *@description : Check if the environment is for headless execution
+   ********************************************************************* */
   ifEnvElse(name: string, onExist: Function, onUndefined: Function): any {
     const value = process.env[name];
     if (value) {
@@ -69,9 +70,7 @@ export class Utils {
 
       let isFilePresent = false;
 
-      const check = async (fullPath: string) => {
-        return fs.existsSync(fullPath) && fs.lstatSync(fullPath).isFile();
-      };
+      const check = async (pathValue: string) => fs.existsSync(pathValue) && fs.lstatSync(pathValue).isFile();
 
       if (params.timerInMs) {
         const startTime = Date.now();
@@ -101,9 +100,9 @@ export class Utils {
   }
 
   getMp4File(dir: string) {
-    let mp4Files: any[] = [];
+    const mp4Files: any[] = [];
     fs.readdirSync(dir).forEach((file: string) => {
-      let fullPath = path.join(dir, file);
+      const fullPath = path.join(dir, file);
       if (!fs.lstatSync(fullPath).isDirectory() && fullPath.includes('.mp4')) {
         mp4Files.push(fullPath);
       }
@@ -135,6 +134,8 @@ export class Utils {
     let fullPath;
     fs.readdirSync(dir).forEach((file: string) => {
       fullPath = path.join(dir, file);
+
+      // eslint-disable-next-line no-unused-expressions
       fs.lstatSync(fullPath).isDirectory()
         ? this.traverseDir(fullPath)
         : !fullPath.includes('index') && allPropsFile.add(fullPath);
@@ -153,6 +154,7 @@ export class Utils {
     fs.readdirSync(cwd).forEach(file => {
       fullPath = path.join(cwd, file);
 
+      // eslint-disable-next-line no-unused-expressions
       fs.lstatSync(fullPath).isDirectory()
         ? this.traverseForLocatorsFiles(fullPath, allLocatorsFile)
         : !(file !== 'index.js' && fullPath.includes('/locators/') && fullPath.endsWith('.js')) ||
@@ -165,8 +167,8 @@ export class Utils {
    * @Description : Import from a list of files
    *********************************************************************************************** */
   async importList(list: string[]): Promise<Set<any>> {
-    let fileImports = new Set();
-    for (let file of list) {
+    const fileImports = new Set();
+    for (const file of list) {
       const fileValue = await import(file);
       fileImports.add(fileValue);
     }
@@ -184,7 +186,7 @@ export class Utils {
   }
 
   crypt(text: string, salt: string) {
-    const textToChars = (text: string) => text.split('').map(c => c.charCodeAt(0));
+    const textToChars = (txt: string) => txt.split('').map(c => c.charCodeAt(0));
 
     const byteHex = (n: any) => ('0' + Number(n).toString(16)).substr(-2);
 
@@ -222,14 +224,15 @@ export class Utils {
     return require(`${process.cwd()}/${fileName}`);
   }
 
-  async createDirectory(path: string) {
+  async createDirectory(pathValue: string) {
     try {
-      await fs.promises.mkdir(path, {recursive: true});
+      await fs.promises.mkdir(pathValue, {recursive: true});
     } catch (err: any) {
       Logger.log(`src.lib.Utils : Error creating directory ${err.message}`);
       throw err;
     }
   }
+
   async writeFile(props: IWriteToDirectory) {
     try {
       await this.createDirectory(props.directoryPath);
@@ -248,7 +251,7 @@ export class Utils {
   // 2. Resolve the test suites collection from multiple modules,to form a master test suite
   async resolveMultipleModuleSuites(testModuleListFromExec: string): Promise<object> {
     const allSuites = await this.listTestSuitePaths(testModuleListFromExec);
-    let suiteObject = JSON.stringify(allSuites).replace(
+    const suiteObject = JSON.stringify(allSuites).replace(
       /features\//g,
       `src/customers/${testModuleListFromExec.toLocaleLowerCase()}/features/`
     );
@@ -257,8 +260,8 @@ export class Utils {
 
   async resolveTestSuiteCollection(suiteNames: string, suiteObject: object) {
     let testSuite = {};
-    let missingTestSuite = [];
-    for (let suiteName of suiteNames) {
+    const missingTestSuite = [];
+    for (const suiteName of suiteNames) {
       if ((suiteObject as any)[suiteName]) {
         testSuite = {
           ...testSuite,
@@ -320,6 +323,7 @@ export class Utils {
   getTestModuleName(testModule: string) {
     let testModuleList;
     if (testModule !== undefined && testModule !== 'undefined') {
+      // eslint-disable-next-line no-unused-expressions
       (testModule.charAt(0) === '[' && testModule.charAt(testModule.length - 1) === ']') ||
       (testModule.charAt(0) === '{' && testModule.charAt(testModule.length - 1) === '}') ||
       (testModule.charAt(0) === '(' && testModule.charAt(testModule.length - 1) === ')')
@@ -339,7 +343,7 @@ export class Utils {
         'Please pass one or multiple test suite name(s), to run the test against. Pass the flag as --suites=abc for a single suite abc or --suites=[abc,xyz] for more than one.'
       );
     }
-    let testSuiteParamVal = suites;
+    const testSuiteParamVal = suites;
     let testSuiteParam = '';
     if (testSuiteParamVal.charAt(0) === '[' && testSuiteParamVal.charAt(testSuiteParamVal.length - 1) === ']') {
       testSuiteParam = JSON.parse(
@@ -350,6 +354,7 @@ export class Utils {
           .join('["')
           .split(',')
           .join('","')
+          // eslint-disable-next-line no-useless-escape
           .replace(/\]\",\"/g, '],')
       );
     }

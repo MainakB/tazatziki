@@ -66,8 +66,11 @@ import {Utils} from '../lib/Utils';
 // Utils.traverseForLocatorsFiles
 export class LocatorsCache {
   private static _instance: LocatorsCache;
+
   private cachedLocators: any;
+
   private commonPoList: any[] = [];
+
   private fileName = 'src.services.LocatorsCache';
 
   private constructor() {}
@@ -97,12 +100,6 @@ export class LocatorsCache {
     const locatorFiles = Array.from(utils.traverseForLocatorsFiles());
     const locators = this.initPageObjects(Object.values(Array.from(await utils.importList(locatorFiles))[0]));
     this.setCachedLocators(locators);
-  }
-
-  protected convertMapToObj(map: any) {
-    const obj = {} as any;
-    for (const [k, v] of map) obj[k] = v;
-    return obj;
   }
 
   protected reduceLocatorsToObject(sources: any) {

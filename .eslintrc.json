@@ -34,6 +34,8 @@
     "no-empty-function": ["warn", {"allow": ["constructors"]}],
     "no-param-reassign": ["warn", {"props": false}],
     "no-use-before-define": "off",
+    "dot-notation": "off",
+    "class-methods-use-this": "off",
     "no-plusplus": [
       "error",
       {

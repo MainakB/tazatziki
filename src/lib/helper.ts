@@ -132,12 +132,12 @@ export function isElementFinder(arg: string | string[] | ElementFinder | Element
  *  @params : {pageObj} value passed
  *  @returns:  return the stored page object
  ************************************************************************************************ */
-let findStoredObject = async (obj: string): Promise<Types.ILocators | null> => {
+const findStoredObject = async (obj: string): Promise<Types.ILocators | null> => {
   Logger.log(`${filePath}.findStoredObject : Look up for object post camelcasing in element repos - "${obj}"`);
 
-  let locatorCacheInstance = LocatorsCache.getInstance();
+  const locatorCacheInstance = LocatorsCache.getInstance();
   if (!locatorCacheInstance.getCachedLocators() || !locatorCacheInstance.getCachedLocators().size) {
-    let parsedLocators = JSON.parse((await getValue('locatorsCache')) as string);
+    const parsedLocators = JSON.parse((await getValue('locatorsCache')) as string);
 
     locatorCacheInstance.setCachedLocators(parsedLocators);
   }
@@ -192,7 +192,7 @@ export const getStoredObjectsJSFiles = async (args: any): Promise<LocatorObject[
   let foundObject: Types.ILocators | null = await findStoredObject(obj);
 
   if (foundObject && foundObject.locator && foundObject.locator.length) {
-    for (let locatorObj of foundObject.locator) {
+    for (const locatorObj of foundObject.locator) {
       if (args.replaceText) {
         locatorObj.locatorValue = replaceTextsInLocators(locatorObj.locatorValue as string, args.replaceText);
       }
@@ -268,8 +268,8 @@ export const setTimedOutStatus = () => {
   maxWaitTimeInstance.setActionDateTime();
   const maxWaitTime = maxWaitTimeInstance.getActionDateTime().getTime();
 
-  let stepDistance = distance(maxWaitTime, startTime, configStepTimeOut);
-  let actionDistance = distance(
+  const stepDistance = distance(maxWaitTime, startTime, configStepTimeOut);
+  const actionDistance = distance(
     maxWaitTime,
     startTime,
     StepDurationCalculator.getInstance().getActionWaitConditionTime()
@@ -289,4 +289,23 @@ export const setTimedOutStatus = () => {
   } else {
     StepDurationCalculator.getInstance().setStopStep(false);
   }
+};
+
+export const runArrayInLoop = async (args: any, cb: Function): Promise<void> => {
+  Logger.log(`${filePath}.runArrayInLoop : Running ${cb} in loop with options ${JSON.stringify(args)}`);
+  for (let i = 0; i < args.pageObject.length; i++) {
+    await cb({
+      ...args,
+      pageObject: (args.pageObject as string[])[i],
+    });
+  }
+  Logger.log(`${filePath}.runArrayInLoop : Array loop completed succesfuly.`);
+};
+
+export const runObjectInLoop = async (args: Array<any>, cb: Function): Promise<void> => {
+  Logger.log(`${filePath}.runObjectInLoop : Running ${cb} in loop with options ${JSON.stringify(args)}`);
+  for (let i = 0; i < args.length; i++) {
+    await cb(args[i]);
+  }
+  Logger.log(`${filePath}.runObjectInLoop : Object loop completed succesfuly.`);
 };

@@ -8,6 +8,7 @@ import {StepDurationCalculator} from '../services/StepDurationCalculator';
 // import {CdnFileMerger} from '../services/CdnFileMerger';
 import {CucumberLoggerService} from './CucumberLoggerService';
 import {RuntimeConfigs} from '../services/RuntimeConfigs';
+import {Logger} from '../services/Logger';
 
 const {generate} = require('multiple-cucumber-html-reporter');
 
@@ -31,7 +32,7 @@ export const hooks = {
    * @param {String} cid worker id (e.g. 0-0)
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  beforeSession (_config: any, _capabilities: any, _specs: any, _cid: any) {
+  beforeSession(_config: any, _capabilities: any, _specs: any, _cid: any) {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
@@ -51,7 +52,7 @@ export const hooks = {
    * @param {Object}             context          Cucumber World object
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async afterStep (_step: any, _scenario: any, result: any, _context: Object) {
+  async afterStep(_step: any, _scenario: any, result: any, _context: Object) {
     const cucumberLoggerInstance = CucumberLoggerService.getInstance();
     if (!result.passed) {
       const stream: string = await browser.takeScreenshot();
@@ -137,7 +138,7 @@ export const hooks = {
    * @param {Object}             context  Cucumber World object
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  beforeStep (_step: any, _scenario: any, _context: any) {
+  beforeStep(_step: any, _scenario: any, _context: any) {
     StepDurationCalculator.getInstance().setDateTime();
   },
 
@@ -151,7 +152,10 @@ export const hooks = {
    * @param {number}                 result.duration  duration of scenario in milliseconds
    * @param {Object}                 context          Cucumber World object
    */
-  // afterScenario: function (world, result, context) {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  afterScenario(_world: any, result: any, _context: any) {
+    Logger.log(`afterScenario : Scenario completed. Status - ${result}`);
+  },
 
   /**
    *
@@ -196,7 +200,7 @@ export const hooks = {
    * @param {<Object>} results object containing test results
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onComplete (_exitCode: any, _config: any, _capabilities: any, _results: any) {
+  onComplete(_exitCode: any, _config: any, _capabilities: any, _results: any) {
     // Generate the report when it all tests are done
     generate({
       // Required

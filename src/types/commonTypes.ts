@@ -48,6 +48,7 @@ export type IClick = IAction;
 export interface IEnterText extends IAction {
   inputText: string;
   clickBeforeTextInput?: boolean;
+  clickAfterTextInput?: boolean;
 }
 
 type ILocatorError = {
